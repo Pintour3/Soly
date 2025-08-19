@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="accueil.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="accueil.js"></script>
+    <link rel="shortcut icon" href="fav.ico" type="image/x-icon">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Soly | Accueil</title>
+</head>
+<body>
+    <aside class="asideFriends">
+        <div class="asideContainer">
+            <div class="headerContainer">
+            </div>
+            <div class="friendContainer">
+                
+            </div>
+        </div>
+    </aside>
+    <aside class="asideProfile">
+            <img class="profilePick" src="blank-profile-picture-973460_1280.webp" alt="">
+            <i class="fa fa-gear"></i>
+            <i class="fa fa-sign-out"></i>
+            <i class="fa fa-info-circle"></i>
+    </aside>
+    <main>
+        <div class="middleContainer">
+            <div id="animationContainer" class="animation">
+                
+            </div>
+            <p class="nofriendContainer">
+                Pas encore d'ami ?
+            </p>
+            <button class="addFriendButton" type="button">Ajoutes-les ici !</button>
+        </div>
+    </main>
+    <div class="friendMenuWrapper">
+        <div class="friendMenu">
+            <div class="crossContainer">
+                <div class="cross1"></div>
+                <div class="cross2"></div>
+            </div>
+            <label class="solyTagLabel" for="text">Entrez le Soly-Tag de votre ami :</label>
+            <div class="inputWrapper">
+                <input required type="text" placeholder="">
+                <label class="placeholder" for="placeholder">Soly-Tag</label>
+            </div>
+            <button>envoyer</button>
+        </div>
+    </div>
+</body>
+</html>

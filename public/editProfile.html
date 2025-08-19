@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="editProfile.css">
+    <script src="editProfile.js"></script>
+    <title>SolY | Edit profile</title>
+</head>
+<body class="roboto">
+    
+    <form action="/editProfile" method="POST" id="form" enctype="multipart/form-data">
+        <main class="contentWrapper">
+            <div class="titleWrapper">
+                <h1>Crée / modifie ton profil utilisateur</h1>
+            </div>
+            <div class="usernameWrapper">
+                <label for="username">Entre ton nom d'utilisateur</label>
+                <input type="text" name="username" id="" placeholder="username" required>
+            </div>
+            <div id="profilePicture" class="imageWrapper">
+                <input hidden name="profilePicture" id="fileInput" type="file" src="" alt="inserez votre photo de profil" accept=".png,.jpg,.jpeg,.gif,.webp">
+                <label for="fileInput">Selectionnez votre photo de profil</label>
+            </div>
+            <div class="validateWrapper">
+                <button type="submit" class="submitButton">Valider</button>
+                <label for="comment">vous pourrez toujours modifier votre profil plus tard</label>
+            </div>
+        </main>
+    </form>
+</body>
+</html>
