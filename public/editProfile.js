@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded",async ()=>{
     //id fileInput
     var fileInput = document.getElementById("fileInput")   
     //lorsqu'on ajoute une image 
@@ -39,6 +39,29 @@ document.addEventListener("DOMContentLoaded",()=>{
         reader.readAsDataURL(file)
         
     })
+    
+    //fetch API (credentials)
+    async function getCredentials(){
+        try {
+            const response = await fetch("/api/getCredentials",{
+                method:"GET",
+                credentials:"include"
+            });
+            if (response.ok) {
+                //return credentials : username, email and profile Picture
+                const userdata = await response.json()
+                return userdata
+            } else {
+                console.error("erreur inatendue")
+            }
+        } catch (error) {
+            console.error(error)
+            }
+    }
+    const user = await getCredentials()
+    console.log(user)
+
+    //fetch POST
     const form = document.getElementById("form")
     form.addEventListener("submit", async (e)=>{
         e.preventDefault()
@@ -56,9 +79,6 @@ document.addEventListener("DOMContentLoaded",()=>{
             console.error("erreur lors de la personnalisation du compte de l'utilisateur ",error)
         }
     })
-
-
-
 
 })
 

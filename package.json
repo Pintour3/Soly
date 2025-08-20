@@ -19,6 +19,7 @@
     "cookie-parser": "^1.4.7",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
+    "fs": "^0.0.1-security",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.1",
     "multer": "^2.0.2",

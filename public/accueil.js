@@ -22,17 +22,14 @@ document.addEventListener("DOMContentLoaded",async()=>{
             console.error(error)
         }
     }
-    const user= await getCredentials()
+    const user = await getCredentials()
+    console.log(user)
     //profile picture
-    //convert to b64
-    
     const profilePicture = user.profilePicture
-    console.log(profilePicture)
+    if (profilePicture) {
+        document.getElementById("profilePicture").src = profilePicture
+    }
     
-    const buffer = Buffer.from(profilePicture.data.data)
-    const base64 = buffer.toString("base64")
-    document.getElementById("profilePicture").src = `data:${profilePicture.contentType};base64,${base64}`;
-
     const username = user.username
 
     function generateAnimation(name) {

@@ -2,11 +2,10 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const bcrypt = require("bcryptjs");
-const mongoose = require("mongoose");
-const multer = require("multer")
-const session = require("express-session")
-const mongoDbStore = require("connect-mongodb-session")(session)
+const multer = require("multer");
+const fs = require("fs")
 const app = express();
+const session = require("express-session")
 const server = http.createServer(app);
 const socketIo = require("socket.io");
 const { urlencoded } = require("body-parser");
@@ -15,13 +14,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(urlencoded({extended: true}))
 app.use(express.json())
 
-//Database
-const url = "mongodb://127.0.0.1:27017/Soly";
-mongoose.connect(url)
-const store = new mongoDbStore({
-    uri:url,
-    collection:"Sessions"
-})
+//files imports
+const route = require("./root-folder/route")
+const User = require("./root-folder/userModel")
+const {store} = require("./root-folder/database")
 
 //cookie and sessions
 app.use(session({
@@ -34,6 +30,26 @@ app.use(session({
     saveUninitialized:false,
     store: store
 }));
+
+//WARN : initialise session and cookie before route, 
+//if not, isAuth middleware will return false even if session is enabled after
+
+//routes importation
+app.use(route)
+
+
+
+//data storage
+const storage = multer.diskStorage({
+    destination:function (req,file,cb) {
+        cb(null, "upload/") //dossier de stockage
+    },
+    filename: function(req,file,cb) {
+        cb(null,Date.now() + path.extname(file.originalname))
+    }
+})
+
+
 //check if user is still valable
 function isAuth(req,res,next){
     if(req.session && req.session.user&& req.session.user.userId) {
@@ -42,38 +58,11 @@ function isAuth(req,res,next){
         res.redirect("/")
     }
 }
-//open edit profile
-app.get("/editProfile",isAuth,(req,res)=>{
-    res.sendFile(path.join(__dirname,"public","editProfile.html"))
-})
-//if the user didn't have a username, redirect to edit profile
-app.get('/accueil', isAuth,async(req, res) => {
-    try {
-        const user = await User.findById(req.session.user.userId).select("username")
-        if (user.username) {
-            req.session.user.username = user.username
-            res.sendFile(path.join(__dirname, 'public', 'accueil.html'));
-        } else {
-            return res.redirect("editProfile")
-        }
-    } catch (error) {
-        console.error(error)
-    }
-});
+
+
 //redirect to a register portal to check e-mail
 //to do svp
 
-
-// Schéma et modèle utilisateur
-const userSchema = new mongoose.Schema({
-    email: { type: String,required:true,unique:true},
-    username:{type:String, default:""},
-    password: { type: String,required:true},
-    online: { type: Boolean, default: false },
-    profilePicture:{data:Buffer,contentType:String}
-});
-//creating an user to push to database 
-const User = mongoose.model("Soly", userSchema,"Users");
 
 //partie formulaire
 //partie inscription
@@ -137,24 +126,56 @@ app.post("/login",async (req,res)=>{
     }
 });
 
-//profile picture storage
-const storage = multer.memoryStorage();
+//picture storage
 const upload = multer({storage:storage})
+
+//allowing access to the upload folder
+app.use("/upload",express.static("upload"))
 
 //partie personnalisation utilisateur
 app.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>{
     try {
-        const updateData = {
-            username:req.body.username
-        }
-        if (req.file){
-            updateData.profilePicture = {
-                data: req.file.buffer,
-                contentType: req.file.mimetype
+        const userId = req.session.user.userId
+        const user = await User.findById(userId)
+        let solyTag;
+        if (!user.solyTag) {
+            let isUnique = false;
+            while(!isUnique) {
+                solyTag = req.body.username + `#${Math.floor(Math.random()*9000) + 1000}`
+                const existingUser = await User.findOne({solyTag})
+                if (!existingUser || existingUser._id.toString() === userId.toString()) {
+                    isUnique = true
+                }
             }
+        } else {
+            solyTag = user.solyTag
         }
-        console.log(req.session.userId)
+        const updateData = {
+            username:req.body.username,
+            solyTag:solyTag
+        }
+        //if file is imported
+        if (req.file) {
+            // user
+            const user = await User.findById(userId)
+            // previous picture
+            const previousPicture = user.profilePicture
+            //if there is one 
+            if (previousPicture) {
+                const oldPath = path.join(__dirname,previousPicture)
+                fs.unlink(oldPath,(err)=>{
+                    if (err) {
+                        console.error("erreur lors de la suppression ", err)
+                    } else {
+                        console.log("ancienne image supprimée")
+                    }
+                })
+            }
+            //new picture
+            const imageUrl = `/upload/${req.file.filename}`;
+            updateData.profilePicture = imageUrl
 
+        }
         //update User
         const updateUser = await User.findByIdAndUpdate(req.session.user.userId,updateData,{new:true});
 
@@ -172,32 +193,25 @@ app.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>
 //requete au serveur pour récupérer les informations utilisateur chez le client
 app.get("/api/getCredentials", isAuth,async (req,res)=>{
     try {
-        const user = await User.findById(req.session.user.userId).select("profilePicture username email")
+        const user = await User.findById(req.session.user.userId).select("username email profilePicture solyTag")
         res.json({
             email: user.email,
             username: user.username,
+            solyTag: user.solyTag,
             profilePicture: user.profilePicture
+            
         })
     }catch (error) {
         console.error(error)
-    }
-
-
-    
+    }    
 })
 
 
 
-
-
-
+//socket.io for message handling
 io.on("connection",(socket)=>{
     console.log("someone just joined with token : " + socket.id)
 });
-
-
-
-
 
 server.listen(3001, () => {
     console.log("server started");

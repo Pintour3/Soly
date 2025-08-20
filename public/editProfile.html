@@ -9,14 +9,15 @@
 </head>
 <body class="roboto">
     
-    <form action="/editProfile" method="POST" id="form" enctype="multipart/form-data">
+    <form autocomplete="off" action="/editProfile" method="POST" id="form" enctype="multipart/form-data">
+        <input autocomplete="false" name="hidden" type="text" style="display:none;">
         <main class="contentWrapper">
             <div class="titleWrapper">
                 <h1>Crée / modifie ton profil utilisateur</h1>
             </div>
             <div class="usernameWrapper">
                 <label for="username">Entre ton nom d'utilisateur</label>
-                <input type="text" name="username" id="" placeholder="username" required>
+                <input type="text" name="username" id="username" placeholder="username" required>
             </div>
             <div id="profilePicture" class="imageWrapper">
                 <input hidden name="profilePicture" id="fileInput" type="file" src="" alt="inserez votre photo de profil" accept=".png,.jpg,.jpeg,.gif,.webp">
