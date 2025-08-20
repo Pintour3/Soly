@@ -36,7 +36,7 @@ app.use(session({
 }));
 //check if user is still valable
 function isAuth(req,res,next){
-    if(req.session.user.userId) {
+    if(req.session && req.session.user&& req.session.user.userId) {
         next()
     } else {
         res.redirect("/")
@@ -169,12 +169,7 @@ app.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>
     }
 })
 
-
-
-
-
 //requete au serveur pour récupérer les informations utilisateur chez le client
-//utile dans accueil
 app.get("/api/getCredentials", isAuth,async (req,res)=>{
     try {
         const user = await User.findById(req.session.user.userId).select("profilePicture username email")

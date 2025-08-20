@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
             if (response.ok) {
                 //return credentials : username, email and profile Picture
                 const userdata = await response.json()
-                return userdata.username
+                return userdata
             } else {
                 console.error("erreur inatendue")
             }
@@ -22,7 +22,18 @@ document.addEventListener("DOMContentLoaded",async()=>{
             console.error(error)
         }
     }
-    var username = await getCredentials()
+    const user= await getCredentials()
+    //profile picture
+    //convert to b64
+    
+    const profilePicture = user.profilePicture
+    console.log(profilePicture)
+    
+    const buffer = Buffer.from(profilePicture.data.data)
+    const base64 = buffer.toString("base64")
+    document.getElementById("profilePicture").src = `data:${profilePicture.contentType};base64,${base64}`;
+
+    const username = user.username
 
     function generateAnimation(name) {
         string = "hi," + name
@@ -98,4 +109,3 @@ document.addEventListener("DOMContentLoaded",async()=>{
         $(".friendMenu").removeClass("visible")
     })
 })
-
