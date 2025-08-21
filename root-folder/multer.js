@@ -1,11 +1,11 @@
 const multer = require("multer")
-
+const path = require("path");
 //data storage
 //store on disk
 const storage = multer.diskStorage({
     destination:function (req,file,cb) {
         //on folder "../upload/"
-        cb(null, "../upload/") 
+        cb(null, "./upload/") 
     },
     filename: function(req,file,cb) {
         //rename the file
