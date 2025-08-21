@@ -3,6 +3,7 @@ const path = require("path")
 const router = express.Router()
 const isAuth = require("./auth")
 const User = require("./userModel")
+const upload = require("./multer")
 //editProfile
 router.get("/editProfile",isAuth,(req,res)=>{
     res.sendFile(path.join(__dirname,"..","public","editProfile.html"))
@@ -23,5 +24,65 @@ router.get('/accueil', isAuth,async(req, res) => {
     }
 });
 
+//route to picture folder
+router.use("/upload",express.static("../upload"))
+
+//partie personnalisation utilisateur
+router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>{
+    try {
+        const userId = req.session.user.userId
+        const user = await User.findById(userId)
+        let solyTag;
+        if (!user.solyTag) {
+            let isUnique = false;
+            while(!isUnique) {
+                solyTag = req.body.username + `#${Math.floor(Math.random()*9000) + 1000}`
+                const existingUser = await User.findOne({solyTag})
+                if (!existingUser || existingUser._id.toString() === userId.toString()) {
+                    isUnique = true
+                }
+            }
+        } else {
+            solyTag = user.solyTag
+        }
+        const updateData = {
+            username:req.body.username,
+            solyTag:solyTag
+        }
+        //if file is imported
+        if (req.file) {
+            // user
+            const user = await User.findById(userId)
+            // previous picture
+            const previousPicture = user.profilePicture
+            //if there is one 
+            if (previousPicture) {
+                const oldPath = path.join(__dirname,previousPicture)
+                fs.unlink(oldPath,(err)=>{
+                    if (err) {
+                        console.error("erreur lors de la suppression ", err)
+                    } else {
+                        console.log("ancienne image supprimée")
+                    }
+                })
+            }
+            //new picture
+            const imageUrl = `/upload/${req.file.filename}`;
+            updateData.profilePicture = imageUrl
+
+        }
+        //update User
+        const updateUser = await User.findByIdAndUpdate(req.session.user.userId,updateData,{new:true});
+
+        //update Session
+        req.session.user = {
+            userId:updateUser._id,
+            username:updateUser.username
+        }
+        return res.status(201).send()
+    } catch (error) {
+        console.error(error)
+    }
+})
 
 module.exports = router

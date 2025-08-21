@@ -10,5 +10,5 @@ const userSchema = new mongoose.Schema({
     solyTag:{type:String,unique:true}
 });
 
-//creating an user to push to database 
+//creating an User to push to database 
 module.exports = mongoose.model("Soly", userSchema,"Users");
