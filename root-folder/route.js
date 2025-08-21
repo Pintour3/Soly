@@ -25,7 +25,7 @@ router.get('/accueil', isAuth,async(req, res) => {
 });
 
 //route to picture folder
-router.use("/upload",express.static("../upload"))
+router.use("/upload",express.static("upload"))
 
 //partie personnalisation utilisateur
 router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>{
