@@ -98,21 +98,6 @@ document.addEventListener("DOMContentLoaded",(event)=>{
             })
         })
     }
-    /*
-    function sendToServer(){
-        fetch("/updateClientCookie",{method: "POST",})
-            .then(response=>{
-                console.log(response)                
-                if (response.ok) {
-                    console.log("data actualised successfully")
-                }else {
-                    console.error("error during cookie actualisation")
-                }
-            })
-            .catch(error => console.error("error during fetch " + error))
-    }
-    setInterval(sendToServer, 30000);
-    */
 
     //dom is loaded so : TIME FOR STYLING 
     //jquery required !

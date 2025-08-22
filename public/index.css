@@ -26,12 +26,15 @@ body {
     height: 100vh;
     font-size: 4em;
     background-color: rgb(80, 80, 80);
+    background-image: url("assets/fond\ d\'écran\ en\ 2k\ p.png");
+    background-size:cover;
 }
 
 main {
     width: 100%;
     height: 100vh;
     display: flex;
+    position: fixed;
     justify-content: center;
     align-items: center;
 }
@@ -306,4 +309,26 @@ form button {
 }
 .progressBarFilling.visible {
     width: 100%;
+}
+
+footer {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 5%;
+    color: white;
+    font-size: 1rem;
+    align-items: center;
+    justify-content: end; 
+    padding-bottom: 0.5em;
+}
+.copyrightContainer {
+    margin: 1em;
+    padding: 0.75em;
+    border-radius: 10px;
+    background-color: rgba(34,34,34,0.6);
+    backdrop-filter: blur(10px);
+    color: rgb(10, 255, 50);
+
 }
