@@ -5,9 +5,11 @@ const userSchema = new mongoose.Schema({
     email: { type: String,required:true,unique:true},
     username:{type:String, default:""},
     password: { type: String,required:true},
-    online: { type: Boolean, default: false },
+    online: { type: Boolean, default: false},
     profilePicture:{type:String,default:""},
-    solyTag:{type:String,unique:true}
+    solyTag:{type:String,unique:true},
+    friendRequest:{type:Array,default:[]},
+    friendList:{type:Array,default:[]}
 });
 
 //creating an User to push to database 

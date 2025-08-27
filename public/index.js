@@ -106,4 +106,16 @@ document.addEventListener("DOMContentLoaded",(event)=>{
         $(".loginForm , .registerForm").toggleClass("mooved")
         $(".goToLogin , .goToRegister").toggleClass("mooved")      
     })
+
+
+    //background moove
+    document.addEventListener("mousemove",(event)=>{
+        var x = event.clientX/window.innerWidth
+        var y = event.clientY/window.innerHeight
+        //value should be : minimum 40%, max 60%
+        //so x  = 0 --> 40%, x = 0.5 --> 50%, x = 1 --> 60%
+        var newX = 40 + x*20
+        var newY = 40 + y*20
+        $("body").css("background-position",`${newX}% ${newY}%`)
+    })
 })

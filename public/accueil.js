@@ -2,8 +2,11 @@
 //var username = sessionStorage.getItem("username") 
 //will use a simple string for debugging
 
-document.addEventListener("DOMContentLoaded",async()=>{
 
+
+document.addEventListener("DOMContentLoaded",async()=>{
+    //output popup
+    const output = document.getElementById("output")
     //fetch vers l'api pour récupérer les credentials du client
     async function getCredentials(){
         try {
@@ -22,6 +25,33 @@ document.addEventListener("DOMContentLoaded",async()=>{
             console.error(error)
         }
     }
+    var solyTagInput = document.getElementById("solyTagInput")
+    var solyTagButton = document.getElementById("solyTagButton")
+    
+    solyTagButton.addEventListener("click",async ()=>{
+        try {
+            console.log(solyTagInput.value)
+            const response = await fetch("/addFriend",{
+                method:"POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({solyTag:solyTagInput.value}) 
+            })
+            const result = await response.json()
+            output.textContent = result.message
+            spawnPopup()
+        } catch (err) {
+            console.error(err)
+        }
+    })
+
+
+
+
+
+
+
     const user = await getCredentials()
     console.log(user)
     //profile picture
@@ -105,4 +135,25 @@ document.addEventListener("DOMContentLoaded",async()=>{
         $(".friendMenuWrapper").removeClass("visible")
         $(".friendMenu").removeClass("visible")
     })
+
+    //popUp settings
+    function spawnPopup() {
+        const popup = $(".popUp")
+        const progressBar = $(".progressBarFilling")
+        progressBar.css("transition","width 2s ease-out")
+        popup.addClass("visible")
+        popup.one("transitionend",()=>{
+            progressBar.addClass("visible")
+            setTimeout(()=>{
+                popup.removeClass("visible")
+                popup.one("transitionend",()=>{
+                    progressBar.removeClass("visible")
+                    progressBar.css("transition","none")
+                })
+            },2000)
+        })
+    }
+
+
+
 })

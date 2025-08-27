@@ -24,6 +24,30 @@ router.get('/accueil', isAuth,async(req, res) => {
     }
 });
 
+router.post("/addFriend",isAuth,async (req,res)=>{
+
+    const solyTag = req.body //{solyTag:"soly#1234"}
+    const userId = req.session.user.userId
+    const user = await User.findById(userId)
+    let userFriendRequest = user.friendRequest
+    const targetUser = await User.findOne(solyTag)
+
+    if (targetUser) {
+        if (!userFriendRequest.some(item => item.solyTag === solyTag.solyTag)) {
+            const date = new Date()
+            userFriendRequest.push({username:targetUser.username,solyTag:targetUser.solyTag,requestDate:date})
+            const updateData = {friendRequest: userFriendRequest}
+            await User.findByIdAndUpdate(req.session.user.userId,updateData,{new:true});
+            res.send({message:`Invitation envoyée à ${targetUser.username} ! 👍`})
+        } else {
+            res.send({message:`Vous avez déjà demandé ${targetUser.username} en ami !`})
+        }
+    } else {
+        res.send({message:"Utilisateur introuvable 😢"})
+    }
+})
+
+
 //route to picture folder
 router.use("/upload",express.static("upload"))
 

@@ -4,6 +4,9 @@
     padding: 0;
     margin: 0;
 }
+.roboto {
+    font-family: "Roboto", sans-serif;
+}
 html {
     width: 100%;
     height: 100%;
@@ -296,3 +299,49 @@ body .asideProfile {
     right: -5%;
 }
 
+.popUp {
+    position: absolute;
+    display: flex;
+    pointer-events: none;
+    opacity: 0;
+    width: 20%;
+    height: 10%;
+    bottom: 2%;
+    right: 50%;
+    translate: 50%;
+    background-color: rgb(20, 20, 20);
+    color: rgb(10, 255, 50);
+    border-radius: 5px;
+    font-size: 1em;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-1.6em);
+    transition: all 1s ease ;
+}
+.popUp.visible {
+    opacity: 1;
+    transform:translateY(0)
+}
+      
+.progressBarEmpty {
+    width: 100%;
+    height:5%;
+    background-color: gray;
+    position: absolute;
+    bottom: 0;
+    border-radius: 0 0 10px 10px ;
+}
+.progressBarFilling {
+    width: 0%;
+    height: 5%;
+    background-color: rgb(10, 255, 50);
+    bottom: 0;
+    position: absolute;
+    border-radius: 0 0 10px 10px;
+    transform-origin: center;
+    transition: width 2s ease-out;
+    
+}
+.progressBarFilling.visible {
+    width: 100%;
+}

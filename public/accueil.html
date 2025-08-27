@@ -46,11 +46,18 @@
                 <div class="cross2"></div>
             </div>
             <label class="solyTagLabel" for="text">Entrez le Soly-Tag de votre ami :</label>
-            <div class="inputWrapper">
-                <input required type="text" placeholder="">
-                <label class="placeholder" for="placeholder">Soly-Tag</label>
-            </div>
-            <button>envoyer</button>
+                <div class="inputWrapper">
+                    <input id="solyTagInput" required type="text" placeholder="">
+                    <label class="placeholder" for="placeholder">Soly-Tag</label>
+                </div>
+                <button id="solyTagButton" type="submit">envoyer</button>
+        </div>
+    </div>
+    <div class="popUp">
+        <span id="output" class="roboto output"></span>
+        <div class="progressBarEmpty">
+        </div>
+        <div class="progressBarFilling">
         </div>
     </div>
 </body>
