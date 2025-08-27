@@ -17,7 +17,7 @@
                 <div class="goToLogin">
                     <h1>Bienvenue !</h1>
                     <p>
-                        Entre tes identifiants pour t'inscrire sur SolY !
+                        Entre tes identifiants pour t'inscrire sur Soly !
                     </p>
                     <p>
                         Déja un Compte ?
@@ -27,7 +27,7 @@
                 <div class="goToRegister">
                     <h1>Heureux de vous revoir !</h1>
                     <p>
-                        Entre tes identifiants pour te connecter sur SolY !
+                        Entre tes identifiants pour te connecter sur Soly !
                     </p>
                     <p>
                         Pas encore de compte ?<br> Inscris-toi !
@@ -39,12 +39,12 @@
                 <form class="registerForm" id="registerForm" action="/register" method="POST" autocomplete="off">
                     <h1>Créer un compte</h1>
                     <div class="inputWrapper">
-                        <input id="emailRegister" type="email" name="email" autocomplete="off" required>
+                        <input id="emailRegister" type="email" name="email" autocomplete="new-password" required>
                         <label class="placeholder">adresse e-mail</label>
                         <button title="email" type="button" id="emailSuggest"></button>
                     </div>
                     <div class="inputWrapper">
-                        <input type="password" name="password" required >
+                        <input type="password" name="password" required autocomplete="new-password">
                         <label class="placeholder">Mot de passe</label>
                     </div>
                     
@@ -54,6 +54,7 @@
             </div>
             <div class="formWrapper">
                 <form class="loginForm" id="loginForm" action="/login" method="POST" >
+                    
                     <h1>Connexion</h1>
                     <div class="inputWrapper">
                         <input id="loginUsername" type="email" name="email" required>  

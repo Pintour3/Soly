@@ -92,13 +92,13 @@ main {
     
 }
 button {
-    width: 50%;
-    height: 2.5em;
+    width: 15vw;
+    height: 3vw;
     border-radius: 5px;
     box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
     border: rgb(10, 255, 50) 3px solid;
     margin-top: 3em;
-    font-size: 1em;
+    font-size: 1.3vw;
     background-color: rgb(20, 20, 20);
     color: rgba(10, 255, 50);
     transition: box-shadow 0.2s ease-in-out,transform 0.2s ease-in-out;
@@ -132,6 +132,7 @@ button {
 }
 
 .friendMenu {
+    aspect-ratio: 16/9;
     border: solid rgb(10, 255,50) 4px;
     position: relative;
     justify-content: center;
@@ -160,14 +161,14 @@ button {
     position: relative;
     background-color: rgba(20, 20, 20);
     box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
-    font-size: 1.5em;
+    font-size: 1.75vw;
     color: rgb(10, 255, 50);
-    width: 13em;
+    width: 40%;
     border-radius: 10px;
     border: rgb(10, 255, 50) 3px solid;
-    height: 2.5em;
-    padding: 0.2em 1em;
-    margin: 1em;
+    height: 2.5vw;
+    padding: 0.5vw 1.5vw;
+    margin: 2vw;
     transition: box-shadow 0.2s ease-in-out;
     &:hover{
         cursor: pointer;
@@ -181,23 +182,23 @@ button {
 
 input:focus + .placeholder, 
 input:valid + .placeholder {
-    transform: translate(-0.6em,-1.4em) scale(0.6);
+    transform: translate(-0.75vw,-2vw) scale(0.6);
 }
 
 .solyTagLabel {
     margin-bottom: 2em;
-    font-size: 2em;
+    font-size: 2.5vw;
 }
 
 .placeholder {
-    left: 6.2em;
+    left: 15vw;
     position: absolute;
     z-index: 1;
-    font-size: 1.8em;
+    font-size: 2vw;
     color: rgba(10, 255, 50,0.5);
     pointer-events: none;
     background-color: rgb(20, 20, 20);
-    padding:0 0.4em;
+    padding:0 1vw;
     transition: transform 0.2s ease-in-out;
     &:hover {
         cursor: pointer;
@@ -214,8 +215,8 @@ input:valid + .placeholder {
     align-items: center;
 }
 .crossContainer {
-    width: 2.5em;
-    height: 2.5em;
+    width: 3vw;
+    height: 3vw;
     margin: 1em;
     top: 0;
     left: 0;

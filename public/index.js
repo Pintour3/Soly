@@ -2,7 +2,6 @@
 
 document.addEventListener("DOMContentLoaded",(event)=>{
     const form1 = document.getElementById("registerForm");
-    const registerOutput = document.getElementById("output");
     const output = document.getElementById("output");
     const emailRegisterInput = document.getElementById("emailRegister")
     const emailRegisterSuggest = document.getElementById("emailSuggest")
