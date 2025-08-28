@@ -13,8 +13,6 @@ router.get("/api/getCredentials", isAuth,async (req,res)=>{
             solyTag: user.solyTag,
             profilePicture: user.profilePicture,
             friendRequest: user.friendRequest
-
-            
         })
     }catch (error) {
         console.error(error)
