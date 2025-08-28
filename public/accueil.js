@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
             console.error(error)
         }
     }
+    
+
+    
     var solyTagInput = document.getElementById("solyTagInput")
     var solyTagButton = document.getElementById("solyTagButton")
     
@@ -46,12 +49,6 @@ document.addEventListener("DOMContentLoaded",async()=>{
         }
     })
 
-
-
-
-
-
-
     const user = await getCredentials()
     console.log(user)
     //profile picture
@@ -59,6 +56,23 @@ document.addEventListener("DOMContentLoaded",async()=>{
     if (profilePicture) {
         document.getElementById("profilePicture").src = profilePicture
     }
+    //friend request 
+    const friendRequest = user.friendRequest
+    if (friendRequest) {   //if there is friend request
+        var friendRequestAmount = 0
+        var displayRedDotNotification = false
+        friendRequest.forEach(request=>{
+            if (request.type === "received") { //if this request is asked from another user
+                friendRequestAmount ++
+                displayRedDotNotification = true
+            }
+        })
+        if (displayRedDotNotification) {
+            $(".redDotNotification").html(friendRequestAmount) //then display the amount of notification
+            $(".redDotNotification").addClass("visible") // add class visible for displaying red DOT
+        }
+    }
+
     
     const username = user.username
 
@@ -153,7 +167,4 @@ document.addEventListener("DOMContentLoaded",async()=>{
             },2000)
         })
     }
-
-
-
 })

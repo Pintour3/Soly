@@ -4,6 +4,7 @@ const router = express.Router()
 const isAuth = require("./auth")
 const User = require("./userModel")
 const upload = require("./multer")
+const fs = require("fs")
 //editProfile
 router.get("/editProfile",isAuth,(req,res)=>{
     res.sendFile(path.join(__dirname,"..","public","editProfile.html"))
@@ -29,15 +30,21 @@ router.post("/addFriend",isAuth,async (req,res)=>{
     const solyTag = req.body //{solyTag:"soly#1234"}
     const userId = req.session.user.userId
     const user = await User.findById(userId)
-    let userFriendRequest = user.friendRequest
     const targetUser = await User.findOne(solyTag)
-
+    let userFriendRequest = user.friendRequest
+    let targetUserFriendRequest = targetUser.friendRequest
+    
     if (targetUser) {
         if (!userFriendRequest.some(item => item.solyTag === solyTag.solyTag)) {
             const date = new Date()
-            userFriendRequest.push({username:targetUser.username,solyTag:targetUser.solyTag,requestDate:date})
-            const updateData = {friendRequest: userFriendRequest}
-            await User.findByIdAndUpdate(req.session.user.userId,updateData,{new:true});
+            //the sender
+            userFriendRequest.push({username:targetUser.username,solyTag:targetUser.solyTag,requestDate:date,type:"sended"}) //type is if it's sended to sm or received by sm
+            //the target user who received the friend request
+            targetUserFriendRequest.push({username:user.username,solyTag:user.solyTag,requestDate:date,type:"received"})
+            const updateUserData = {friendRequest: userFriendRequest}
+            const updateTargetUserData = {friendRequest:targetUserFriendRequest}
+            await User.findByIdAndUpdate(req.session.user.userId,updateUserData,{new:true});
+            await User.findOneAndUpdate(solyTag,updateTargetUserData,{new:true});
             res.send({message:`Invitation envoyée à ${targetUser.username} ! 👍`})
         } else {
             res.send({message:`Vous avez déjà demandé ${targetUser.username} en ami !`})
@@ -46,7 +53,6 @@ router.post("/addFriend",isAuth,async (req,res)=>{
         res.send({message:"Utilisateur introuvable 😢"})
     }
 })
-
 
 //route to picture folder
 router.use("/upload",express.static("upload"))

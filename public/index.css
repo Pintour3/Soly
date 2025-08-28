@@ -166,7 +166,7 @@ form .inputWrapper {
     width: 70%;
     height: 100%;
     right: -20%;
-    border-radius: 2em;
+    border-radius: 5vw;
     z-index: 2;
     background-color: rgb(10, 255, 50);
     transition: right 0.5s ease-in-out;
