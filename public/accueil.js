@@ -5,7 +5,40 @@
 
 
 document.addEventListener("DOMContentLoaded",async()=>{
+    //Styling
+    //i'll do some JQuery
+    $(".addFriendButton").on("click",()=>{
+        console.log("clicked")
+        $(".friendMenuWrapper").addClass("visible")
+        $(".friendMenu").addClass("visible")
+    })
+    $(".crossContainer").on("click",()=>{
+        $(".friendMenuWrapper").removeClass("visible")
+        $(".friendMenu").removeClass("visible")
+    })
     //output popup
+    //popUp settings
+    function spawnPopup() {
+        const popup = $(".popUp")
+        const progressBar = $(".progressBarFilling")
+        progressBar.css("transition","width 2s ease-out")
+        popup.addClass("visible")
+        popup.one("transitionend",()=>{
+            progressBar.addClass("visible")
+            setTimeout(()=>{
+                popup.removeClass("visible")
+                popup.one("transitionend",()=>{
+                    progressBar.removeClass("visible")
+                    progressBar.css("transition","none")
+                })
+            },2000)
+        })
+    }
+    //friend Request container display
+    $(".friendRequestIcon").on("click",()=>{
+        $(".friendRequestContainer").toggleClass("visible")
+    })
+
     const output = document.getElementById("output")
     //fetch vers l'api pour récupérer les credentials du client
     async function getCredentials(){
@@ -57,22 +90,61 @@ document.addEventListener("DOMContentLoaded",async()=>{
         document.getElementById("profilePicture").src = profilePicture
     }
     //friend request 
+    function friendRequestPattern(username,solyTag) {
+        return `<nav class="friendRequestContentContainer">
+                <div class="friendRequestUserContainer">
+                    <div class="friendRequestPictureContainer">
+                        <div class="friendRequestPicture"></div>
+                    </div>
+                    <div class="friendRequestCredentialsContainer">
+                        <h1 class="friendRequestName">${username}</h1>
+                        <span class="friendRequestTag">${solyTag}</span>
+                    </div>
+                    <div class="friendRequestQuestionContainer">
+                        <div class="friendRequestYes"><i class="fa-solid fa-check"></i></div>
+                        <div class="friendRequestNo"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                </div>
+            </nav>`
+    }
+
+
+
+
     const friendRequest = user.friendRequest
     if (friendRequest) {   //if there is friend request
         var friendRequestAmount = 0
         var displayRedDotNotification = false
+        var friendRequestList = []
         friendRequest.forEach(request=>{
             if (request.type === "received") { //if this request is asked from another user
                 friendRequestAmount ++
                 displayRedDotNotification = true
+                friendRequestList.push({username:request.username,solyTag:request.solyTag})
             }
         })
         if (displayRedDotNotification) {
             $(".redDotNotification").html(friendRequestAmount) //then display the amount of notification
             $(".redDotNotification").addClass("visible") // add class visible for displaying red DOT
+            friendRequestList.forEach(request =>{
+                const content = friendRequestPattern(request.username,request.solyTag)
+                $(".friendRequestContainer").append(content)
+            })  
+            
         }
     }
+    //friend Request color red or green
+    $(".friendRequestNo").hover(()=>{
+        $(".friendRequestQuestionContainer").addClass("before")
+    },()=>{
+        $(".friendRequestQuestionContainer").removeClass("before")
+    })
 
+    $(".friendRequestYes").hover(()=>{
+        $(".friendRequestQuestionContainer").addClass("after")
+    },()=>{
+        $(".friendRequestQuestionContainer").removeClass("after")
+    })
     
     const username = user.username
 
@@ -138,33 +210,4 @@ document.addEventListener("DOMContentLoaded",async()=>{
             }) 
         })
     })
-    //animation done
-    //then i'll do some JQuery
-    $(".addFriendButton").on("click",()=>{
-        console.log("clicked")
-        $(".friendMenuWrapper").addClass("visible")
-        $(".friendMenu").addClass("visible")
-    })
-    $(".crossContainer").on("click",()=>{
-        $(".friendMenuWrapper").removeClass("visible")
-        $(".friendMenu").removeClass("visible")
-    })
-
-    //popUp settings
-    function spawnPopup() {
-        const popup = $(".popUp")
-        const progressBar = $(".progressBarFilling")
-        progressBar.css("transition","width 2s ease-out")
-        popup.addClass("visible")
-        popup.one("transitionend",()=>{
-            progressBar.addClass("visible")
-            setTimeout(()=>{
-                popup.removeClass("visible")
-                popup.one("transitionend",()=>{
-                    progressBar.removeClass("visible")
-                    progressBar.css("transition","none")
-                })
-            },2000)
-        })
-    }
 })
