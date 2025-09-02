@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
             this.profilePicture = profilePicture
         }
         displayRequest(){
-            var content =  `<nav class="friendRequestContentContainer">
+            var content =  $(`<nav class="friendRequestContentContainer">
                         <div class="friendRequestUserContainer">
                             <div class="friendRequestPictureContainer">
                                 <div class="friendRequestPicture"><img src="${this.profilePicture}" alt=""></div>
@@ -103,15 +103,52 @@ document.addEventListener("DOMContentLoaded",async()=>{
                                 <div class="friendRequestNo"><i class="fa-solid fa-xmark"></i></div>
                             </div>
                         </div>
-                    </nav>`
+                    </nav>`) // important de mettre $("") car on peut utiliser data (transforme la string en objet jQuery)
+            content.data("currentRequest",this) //stocke une data dans le container pour l'identifier
             $(".friendRequestContainer").append(content)
         }
+        async deny(){
+            console.log(this.username + " a été refusé")
+            this.accepted = false
+            try {
+                const response = await fetch("/friendRequest",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type": "application/json"
+                        },
+                    body:JSON.stringify(this)
+                    }
+                )
+                const result = await response.json()
+                output.textContent = result.message
+                spawnPopup()
+            } catch(err) {
+                console.error(err)
+            }
+        }
+        async allow(){
+            console.log(this.username + " a été accepté")
+            this.accepted = true
+            try {
+                const response = await fetch("/friendRequest",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type": "application/json"
+                        },
+                    body:JSON.stringify(this)
+                    }
+                )
+                const result = await response.json()
+                output.textContent = result.message
+                spawnPopup()
+            } catch(err) {
+                console.error(err)
+            }
+        }
+
     }
 
     const user = await getCredentials()
-    
-    //profile picture
-    const profilePicture = user.profilePicture
     const friendRequest = user.friendRequest
 
     if (friendRequest) { //if there is friend request
@@ -134,13 +171,26 @@ document.addEventListener("DOMContentLoaded",async()=>{
     }
 
     //friend Request color red or green
-    // hover sur le bouton "Non"
+    //hover sur le bouton "Non"
     $(".friendRequestNo").hover(function() {
         $(this).closest(".friendRequestQuestionContainer").addClass("before");
     }, function() {
         $(this).closest(".friendRequestQuestionContainer").removeClass("before");
     });
+    //click sur le bouton "Non"
     $(".friendRequestNo").click(function(){
+        const currentRequest = $(this).closest(".friendRequestContentContainer").data("currentRequest")
+        if (currentRequest) {
+            currentRequest.deny()
+        }
+        $(this).closest(".friendRequestContentContainer").remove()
+    })
+    //click sur le bouton "Oui"
+    $(".friendRequestYes").click(function(){
+        const currentRequest = $(this).closest(".friendRequestContentContainer").data("currentRequest")
+        if (currentRequest) {
+            currentRequest.allow()
+        }
         $(this).closest(".friendRequestContentContainer").remove()
     })
     // hover sur le bouton "Oui"

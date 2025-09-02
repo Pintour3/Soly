@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     profilePicture:{type:String,default:""},
     solyTag:{type:String,unique:true},
     friendRequest:{type:Array,default:[]},
-    friendList:{type:Array,default:[]}
+    friendList:[{type:mongoose.Schema.Types.ObjectId,ref:"Soly"}]
 });
 
 //creating an User to push to database 
