@@ -82,70 +82,74 @@ document.addEventListener("DOMContentLoaded",async()=>{
         }
     })
 
+    class FriendRequest {
+        constructor(username,solyTag,profilePicture){
+            this.username = username
+            this.solyTag = solyTag
+            this.profilePicture = profilePicture
+        }
+        displayRequest(){
+            var content =  `<nav class="friendRequestContentContainer">
+                        <div class="friendRequestUserContainer">
+                            <div class="friendRequestPictureContainer">
+                                <div class="friendRequestPicture"><img src="${this.profilePicture}" alt=""></div>
+                            </div>
+                            <div class="friendRequestCredentialsContainer">
+                                <h1 class="friendRequestName">${this.username}</h1>
+                                <span class="friendRequestTag">${this.solyTag}</span>
+                            </div>
+                            <div class="friendRequestQuestionContainer">
+                                <div class="friendRequestYes"><i class="fa-solid fa-check"></i></div>
+                                <div class="friendRequestNo"><i class="fa-solid fa-xmark"></i></div>
+                            </div>
+                        </div>
+                    </nav>`
+            $(".friendRequestContainer").append(content)
+        }
+    }
+
     const user = await getCredentials()
-    console.log(user)
+    
     //profile picture
     const profilePicture = user.profilePicture
-    if (profilePicture) {
-        document.getElementById("profilePicture").src = profilePicture
-    }
-    //friend request 
-    function friendRequestPattern(username,solyTag) {
-        return `<nav class="friendRequestContentContainer">
-                <div class="friendRequestUserContainer">
-                    <div class="friendRequestPictureContainer">
-                        <div class="friendRequestPicture"></div>
-                    </div>
-                    <div class="friendRequestCredentialsContainer">
-                        <h1 class="friendRequestName">${username}</h1>
-                        <span class="friendRequestTag">${solyTag}</span>
-                    </div>
-                    <div class="friendRequestQuestionContainer">
-                        <div class="friendRequestYes"><i class="fa-solid fa-check"></i></div>
-                        <div class="friendRequestNo"><i class="fa-solid fa-xmark"></i></div>
-                    </div>
-                </div>
-            </nav>`
-    }
-
-
-
-
     const friendRequest = user.friendRequest
-    if (friendRequest) {   //if there is friend request
-        var friendRequestAmount = 0
+
+    if (friendRequest) { //if there is friend request
         var displayRedDotNotification = false
-        var friendRequestList = []
+        var requestList = []
         friendRequest.forEach(request=>{
             if (request.type === "received") { //if this request is asked from another user
-                friendRequestAmount ++
                 displayRedDotNotification = true
-                friendRequestList.push({username:request.username,solyTag:request.solyTag})
+                var request = new FriendRequest(request.username,request.solyTag,"") //replace "" with request.profilePicture
+                requestList.push(request)
             }
         })
         if (displayRedDotNotification) {
-            $(".redDotNotification").html(friendRequestAmount) //then display the amount of notification
+            $(".redDotNotification").html(requestList.length) //then display the amount of notification
             $(".redDotNotification").addClass("visible") // add class visible for displaying red DOT
-            friendRequestList.forEach(request =>{
-                const content = friendRequestPattern(request.username,request.solyTag)
-                $(".friendRequestContainer").append(content)
+            requestList.forEach(request =>{
+                request.displayRequest()
             })  
-            
         }
     }
-    //friend Request color red or green
-    $(".friendRequestNo").hover(()=>{
-        $(".friendRequestQuestionContainer").addClass("before")
-    },()=>{
-        $(".friendRequestQuestionContainer").removeClass("before")
-    })
 
-    $(".friendRequestYes").hover(()=>{
-        $(".friendRequestQuestionContainer").addClass("after")
-    },()=>{
-        $(".friendRequestQuestionContainer").removeClass("after")
+    //friend Request color red or green
+    // hover sur le bouton "Non"
+    $(".friendRequestNo").hover(function() {
+        $(this).closest(".friendRequestQuestionContainer").addClass("before");
+    }, function() {
+        $(this).closest(".friendRequestQuestionContainer").removeClass("before");
+    });
+    $(".friendRequestNo").click(function(){
+        $(this).closest(".friendRequestContentContainer").remove()
     })
-    
+    // hover sur le bouton "Oui"
+    $(".friendRequestYes").hover(function() {
+        $(this).closest(".friendRequestQuestionContainer").addClass("after");
+    }, function() {
+        $(this).closest(".friendRequestQuestionContainer").removeClass("after");
+    });
+
     const username = user.username
 
     function generateAnimation(name) {
