@@ -7,9 +7,12 @@ const server = http.createServer(app);
 const socketIo = require("socket.io");
 const { urlencoded } = require("body-parser");
 const io = socketIo(server);
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {index: false}));
 app.use(urlencoded({extended: true}))
 app.use(express.json())
+
+
+
 
 //files imports
 const route = require("./root-folder/route")

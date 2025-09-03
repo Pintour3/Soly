@@ -37,7 +37,7 @@ body {
     z-index: 1;
 }
 .headerWrapper {
-    height: 5em;
+    height: 5vw;
     position: relative;
     width: 100%;
     display: flex;
@@ -48,15 +48,15 @@ body {
 .headerContainer {
     display: flex;
     align-items: center;
+    justify-content: center;
     position: relative;
     width: 90%;
-    height: 4em;
+    height: 4vw;
     border-radius: 0.75vw;
+    font-size: 1vw;
     background-color: rgb(20,20,20);
 }
-.headerContainer h1 {
-    padding-left: 2vw;
-}
+
 .friendFooterContainer {
     width: 100%;
     height: 5vw;
@@ -80,6 +80,17 @@ body {
         cursor: pointer;
     }
 }
+
+.friend {
+    background-color: red;
+    height: 5vw;
+    width: 100%;
+    position: relative;
+}
+
+
+
+
 .redDotNotification {
     height: 1.2vw;
     aspect-ratio: 1/1;

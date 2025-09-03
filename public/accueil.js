@@ -1,8 +1,10 @@
 //actually the idea is to load this thing when the server will be running : 
 //var username = sessionStorage.getItem("username") 
 //will use a simple string for debugging
-
-
+const url = window.location.href
+if (url.includes(".html")){
+    window.location.href = "/"
+} 
 
 document.addEventListener("DOMContentLoaded",async()=>{
     //Styling
@@ -147,6 +149,13 @@ document.addEventListener("DOMContentLoaded",async()=>{
         }
 
     }
+    class Friend {
+        constructor(){
+
+        }
+    }
+
+
 
     const user = await getCredentials()
     const friendRequest = user.friendRequest

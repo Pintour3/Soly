@@ -5,13 +5,32 @@ const isAuth = require("./auth")
 const User = require("./userModel")
 const upload = require("./multer")
 const fs = require("fs")
+
+function homeRedirect(req,res){
+    const user = req.session.user
+    if (!user){
+        return res.sendFile(path.join(__dirname,"..","public","index.html"))
+    }
+    if (!user.username) {
+        return res.redirect("/editProfile")
+    }
+    return res.redirect("/accueil")
+}
+
+//landing
+
+router.get(["/","/index.html"],homeRedirect);
+
+
 //editProfile
+
 router.get("/editProfile",isAuth,(req,res)=>{
     res.sendFile(path.join(__dirname,"..","public","editProfile.html"))
 })
 
 //if the user didn't have a username, redirect to edit profile
-router.get('/accueil', isAuth,async(req, res) => {
+
+router.get(['/accueil',"/accueil.html"], isAuth,async(req, res) => {
     try {
         const user = await User.findById(req.session.user.userId).select("username")
         if (user.username) {
@@ -93,8 +112,8 @@ router.post("/addFriend",isAuth,async (req,res)=>{
     const targetUser = await User.findOne(solyTag)
     let userFriendRequest = user.friendRequest
     let userFriendList = user.friendList
-    let targetUserFriendRequest = targetUser.friendRequest
     if (targetUser) {
+        let targetUserFriendRequest = targetUser.friendRequest
         if (!userFriendRequest.some(item => item.solyTag === solyTag.solyTag)) {
             if (solyTag.solyTag == user.solyTag) {
                 res.send({message:"Vous ne pouvez pas vous inviter vous-même"})
@@ -119,8 +138,7 @@ router.post("/addFriend",isAuth,async (req,res)=>{
         res.send({message:"Utilisateur introuvable 😢"})
     }
 })
-//partie gestion des demandes d'ami
-
+//partie acceptation demande d'ami
 router.post("/friendRequest",isAuth, async(req,res)=>{
     const request = req.body
     const targetSolyTag = request.solyTag

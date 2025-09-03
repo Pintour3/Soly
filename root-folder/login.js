@@ -2,8 +2,7 @@ const express = require("express")
 const router = express.Router()
 const User = require("./userModel")
 const bcrypt = require("bcryptjs")
-
-
+const path = require("path")
 
 //LOGIN
 router.post("/login",async (req,res)=>{

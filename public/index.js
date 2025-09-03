@@ -1,5 +1,8 @@
 //window.socket = io('http://localhost:3001')
-
+const url = window.location.href
+if (url.includes(".html")){
+    window.location.href = "/"
+} 
 document.addEventListener("DOMContentLoaded",(event)=>{
     const form1 = document.getElementById("registerForm");
     const output = document.getElementById("output");
