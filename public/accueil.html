@@ -9,6 +9,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script src="https://kit.fontawesome.com/f33d721ffe.js" crossorigin="anonymous"></script>
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="particles.js"></script>
     <title>Soly | Accueil</title>
 </head>
 <body>
@@ -43,7 +45,7 @@
             <i class="fa fa-sign-out" id="logout"></i>
             <i class="fa fa-info-circle"></i>
     </aside>
-    <main>
+    <main class="middleWrapper">
         <div class="middleContainer">
             <div id="animationContainer" class="animation">
                 
@@ -53,7 +55,28 @@
             </p>
             <button class="addFriendButton" type="button">Ajoutes-les ici !</button>
         </div>
-        <div class="chatContainer"></div>
+        <div class="chatContainer">
+            <div class="chatContent">
+                <header></header>
+                <main></main>
+                <footer class="chatFooter">
+                    <div class="footerIcons">
+                        <i class="fa-regular fa-face-smile"></i>
+                        <i class="fa-regular fa-file"></i>
+                    </div>
+                    <div class="footerInput">
+                        <input type="text">
+                    </div>
+                    <div class="footerButton">
+                        <button>
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </footer>
+            </div>
+            <div id="particles-js"></div>
+        </div>
+        
     </main>
     <div class="friendMenuWrapper">
         <div class="friendMenu">
@@ -66,7 +89,7 @@
                     <input id="solyTagInput" required type="text" placeholder="">
                     <label class="placeholder" for="placeholder">Soly-Tag</label>
                 </div>
-                <button id="solyTagButton" type="submit">envoyer</button>
+                <button class="addFriendButton" id="solyTagButton" type="submit">envoyer</button>
         </div>
     </div>
     <div class="popUp">

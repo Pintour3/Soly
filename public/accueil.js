@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
             this.profilePicture = profilePicture
         }
         displayFriend() {
-            var content = `<div class="friendWrapper">
+            var content = $(`<div class="friendWrapper">
                     <div class="friendUserContainer">
                         <div class="friendPictureContainer">
                             <div class="friendPicture"><img src="" alt=""></div>
@@ -132,7 +132,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
                             <span class="friendTag">${this.solyTag}</span>
                         </div>
                     </div>
-                </div>`
+                </div>`)
+            content.data("friend",this)
             $(".friendContainer").append(content)
         }
     }
@@ -303,5 +304,19 @@ document.addEventListener("DOMContentLoaded",async()=>{
     //friend Request container display
     $(".friendRequestIcon").on("click",()=>{
         $(".friendRequestContainer").toggleClass("visible")
+    })
+    let currentFriendChat = null;
+    $(document).on("click",".friendWrapper",function(){
+        
+        $(".friendMenu,.friendMenuWrapper").removeClass("visible")
+        const data = $(this).data("friend") //associe le container à son objet 
+        if (data === currentFriendChat) {
+            $(".chatContainer").removeClass("visible")
+            currentFriendChat = null
+        } else {
+            $(".chatContainer").addClass("visible")
+            currentFriendChat = data
+        }
+        
     })
 })
