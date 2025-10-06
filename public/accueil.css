@@ -33,11 +33,15 @@ body {
     position: relative;
     box-shadow:0px 0px 10px 2px rgba(80,80,80,0.75);
     width: 100%;
-    height: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     z-index: 1;
+    overflow: hidden;
 }
 .headerWrapper {
-    height: 5vw;
+    flex: 0 0 auto;
+    padding: 0.75vw 0;
     position: relative;
     width: 100%;
     display: flex;
@@ -58,6 +62,7 @@ body {
 }
 
 .friendFooterContainer {
+    flex: 0 0 auto;
     width: 100%;
     height: 5vw;
     background-color: rgb(20, 20, 20);
@@ -80,17 +85,6 @@ body {
         cursor: pointer;
     }
 }
-
-.friend {
-    background-color: red;
-    height: 5vw;
-    width: 100%;
-    position: relative;
-}
-
-
-
-
 .redDotNotification {
     height: 1.2vw;
     aspect-ratio: 1/1;
@@ -107,6 +101,20 @@ body {
 }
 .redDotNotification.visible {
     display: flex;
+}
+.friendContainer {
+    flex: 1 1 auto;
+    overflow-y: scroll;
+}
+.friendWrapper {
+    background-color: rgb(20, 20, 20);
+    height: 5vw;
+    width: 100%;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255,0.3);
+}
+.friendWrapper:hover {
+    cursor: pointer;
 }
 
 .friendRequestContainer {
@@ -160,14 +168,13 @@ body {
     display: flex;
     flex-direction: column;
 }
-.friendRequestUserContainer {
+.friendRequestUserContainer, .friendUserContainer {
     height: 5vw;
     width: 100%;
     display: flex;
     position: relative;
-    border-bottom: 2px solid rgba(255, 255, 255,0.1);
 }
-.friendRequestPictureContainer {
+.friendRequestPictureContainer, .friendPictureContainer {
     width: 5vw;
     height: 100%;
     position: relative;
@@ -176,7 +183,7 @@ body {
     align-items: center;
     border-right: 2px solid rgba(255, 255, 255,0.1);
 }
-.friendRequestPicture {
+.friendRequestPicture, .friendPicture {
     border-radius: 30%;
     width: 90%;
     height: 90%;
@@ -184,11 +191,19 @@ body {
     position: relative;
     transition: all 0.2s ease-in-out;
 }
-.friendRequestPicture:hover {
+.friendRequestPicture:hover, .friendPicture:hover {
     border-radius:10%;
     cursor: pointer;
 }
-
+.friendCredentialsContainer {
+    position: relative;
+    display: flex;
+    flex-direction:column;
+    align-items:center;
+    height: 100%;
+    width: 60%;
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
+}
 .friendRequestCredentialsContainer {
     display: flex;
     flex-direction: column;
@@ -196,19 +211,25 @@ body {
     width: 50%;
     border-right: 2px solid rgba(255, 255, 255,0.1);
 }
-.friendRequestName {
+.friendRequestName, .friendName {
     top: 25%;
     padding-left:0.5vw ;
     position: relative;
     white-space: nowrap;
     font-size: 1.5vw;
 }
-.friendRequestTag {
+.friendName {
+    padding: 0;
+}
+.friendRequestTag, .friendTag {
     top: 25%;
     padding-left:0.5vw ;
     position: relative;
     font-size: 1vw;
     opacity: 0.5;
+}
+.friendTag {
+    padding: 0;
 }
 .friendRequestQuestionContainer {
     height: 100%;
@@ -590,4 +611,13 @@ body .asideProfile {
 }
 .progressBarFilling.visible {
     width: 100%;
+}
+
+
+.chatContainer {
+    position: absolute;
+    background-color: rgb(20, 20, 20);
+    width: 100%;
+    height: 100%;
+    display: flex;
 }

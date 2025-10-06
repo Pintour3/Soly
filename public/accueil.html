@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="accueil.css">
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="accueil.js"></script>
+    <script type="module" src="accueil.js"></script>
     <link rel="shortcut icon" href="fav.ico" type="image/x-icon">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
@@ -20,10 +19,7 @@
                     <h1>Messages ● 📬</h1>
                 </div>
             </div>
-            <div class="friendContainer">
-                <div class="friend">
-                    
-                </div>
+            <div class="friendContainer">          
             </div>
         </div>
         <div class="friendRequestContainer">
@@ -44,7 +40,7 @@
     <aside class="asideProfile">
             <img id="profilePicture" class="profilePicture" src="" alt="">
             <i class="fa fa-gear"></i>
-            <i class="fa fa-sign-out"></i>
+            <i class="fa fa-sign-out" id="logout"></i>
             <i class="fa fa-info-circle"></i>
     </aside>
     <main>
@@ -57,6 +53,7 @@
             </p>
             <button class="addFriendButton" type="button">Ajoutes-les ici !</button>
         </div>
+        <div class="chatContainer"></div>
     </main>
     <div class="friendMenuWrapper">
         <div class="friendMenu">

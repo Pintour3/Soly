@@ -1,45 +1,12 @@
-//actually the idea is to load this thing when the server will be running : 
-//var username = sessionStorage.getItem("username") 
-//will use a simple string for debugging
+import {io} from "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.esm.min.js"
 const url = window.location.href
 if (url.includes(".html")){
     window.location.href = "/"
 } 
+//socket.io
+const socket = io("http://192.168.1.78:3001")
 
 document.addEventListener("DOMContentLoaded",async()=>{
-    //Styling
-    //i'll do some JQuery
-    $(".addFriendButton").on("click",()=>{
-        console.log("clicked")
-        $(".friendMenuWrapper").addClass("visible")
-        $(".friendMenu").addClass("visible")
-    })
-    $(".crossContainer").on("click",()=>{
-        $(".friendMenuWrapper").removeClass("visible")
-        $(".friendMenu").removeClass("visible")
-    })
-    //output popup
-    //popUp settings
-    function spawnPopup() {
-        const popup = $(".popUp")
-        const progressBar = $(".progressBarFilling")
-        progressBar.css("transition","width 2s ease-out")
-        popup.addClass("visible")
-        popup.one("transitionend",()=>{
-            progressBar.addClass("visible")
-            setTimeout(()=>{
-                popup.removeClass("visible")
-                popup.one("transitionend",()=>{
-                    progressBar.removeClass("visible")
-                    progressBar.css("transition","none")
-                })
-            },2000)
-        })
-    }
-    //friend Request container display
-    $(".friendRequestIcon").on("click",()=>{
-        $(".friendRequestContainer").toggleClass("visible")
-    })
 
     const output = document.getElementById("output")
     //fetch vers l'api pour récupérer les credentials du client
@@ -60,29 +27,48 @@ document.addEventListener("DOMContentLoaded",async()=>{
             console.error(error)
         }
     }
-    
-
-    
-    var solyTagInput = document.getElementById("solyTagInput")
-    var solyTagButton = document.getElementById("solyTagButton")
-    
-    solyTagButton.addEventListener("click",async ()=>{
+    async function disconnect() {
         try {
-            console.log(solyTagInput.value)
-            const response = await fetch("/addFriend",{
+            const response = await fetch("/api/logout", {
                 method:"POST",
+                credentials:"include",
                 headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({solyTag:solyTagInput.value}) 
+                    "Content-Type":"application/json"
+                }
             })
-            const result = await response.json()
-            output.textContent = result.message
-            spawnPopup()
+            const data = await response.json();
+            if (response.ok) {
+                if(window.socket && typeof window.socket.disconnect === "function") {
+                    window.socket.disconnect()
+                }
+            } else {
+                console.error("logoutFailed", data)
+            }
         } catch (err) {
             console.error(err)
         }
+    }
+    //disconnect client 
+    const logoutButton = document.getElementById("logout")
+    logoutButton.addEventListener("click",async ()=>{
+        console.log("disconnected")
+        await disconnect()
+        window.location.href = "/"
+        
     })
+
+    //submit friend formular
+    var solyTagInput = document.getElementById("solyTagInput")
+    var solyTagButton = document.getElementById("solyTagButton")
+    
+    solyTagButton.addEventListener("click",()=>{
+        socket.emit("addFriend",{solyTag:solyTagInput.value}) //server want an object
+    })
+    //response 
+    socket.on("addFriendResponse",(response)=>{
+            output.textContent = response
+            spawnPopup()
+        })
 
     class FriendRequest {
         constructor(username,solyTag,profilePicture){
@@ -91,7 +77,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
             this.profilePicture = profilePicture
         }
         displayRequest(){
-            var content =  $(`<nav class="friendRequestContentContainer">
+            var content =  $(`<div class="friendRequestContentContainer">
                         <div class="friendRequestUserContainer">
                             <div class="friendRequestPictureContainer">
                                 <div class="friendRequestPicture"><img src="${this.profilePicture}" alt=""></div>
@@ -105,112 +91,124 @@ document.addEventListener("DOMContentLoaded",async()=>{
                                 <div class="friendRequestNo"><i class="fa-solid fa-xmark"></i></div>
                             </div>
                         </div>
-                    </nav>`) // important de mettre $("") car on peut utiliser data (transforme la string en objet jQuery)
+                    </div>`) // important de mettre $("") car on peut utiliser data (transforme la string en objet jQuery)
             content.data("currentRequest",this) //stocke une data dans le container pour l'identifier
             $(".friendRequestContainer").append(content)
         }
-        async deny(){
+        deny(){
             console.log(this.username + " a été refusé")
             this.accepted = false
-            try {
-                const response = await fetch("/friendRequest",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type": "application/json"
-                        },
-                    body:JSON.stringify(this)
-                    }
-                )
-                const result = await response.json()
-                output.textContent = result.message
+            socket.emit("friendRequest",this)
+            socket.on("friendRequestResponse",(message)=>{
+                output.textContent = message
                 spawnPopup()
-            } catch(err) {
-                console.error(err)
-            }
+            })
         }
-        async allow(){
+        allow(){
             console.log(this.username + " a été accepté")
             this.accepted = true
-            try {
-                const response = await fetch("/friendRequest",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type": "application/json"
-                        },
-                    body:JSON.stringify(this)
-                    }
-                )
-                const result = await response.json()
-                output.textContent = result.message
+            socket.emit("friendRequest",this)
+            socket.on("friendRequestResponse",(message)=>{
+                output.textContent = message
                 spawnPopup()
-            } catch(err) {
-                console.error(err)
-            }
+            })
         }
 
     }
     class Friend {
-        constructor(){
-
+        constructor(username,solyTag,profilePicture){
+            this.username = username
+            this.solyTag = solyTag
+            this.profilePicture = profilePicture
         }
+        displayFriend() {
+            var content = `<div class="friendWrapper">
+                    <div class="friendUserContainer">
+                        <div class="friendPictureContainer">
+                            <div class="friendPicture"><img src="" alt=""></div>
+                        </div>
+                        <div class="friendCredentialsContainer">
+                            <h1 class="friendName">${this.username}</h1>
+                            <span class="friendTag">${this.solyTag}</span>
+                        </div>
+                    </div>
+                </div>`
+            $(".friendContainer").append(content)
+        }
+    }
+    function displayRedDotNotification(requestList) {
+        $(".redDotNotification").html(requestList.length) //then display the amount of notification
+        $(".redDotNotification").addClass("visible") // add class visible for displaying red DOT
+        requestList.forEach(request =>{
+            request.displayRequest()
+        })
     }
 
 
-
-    const user = await getCredentials()
-    const friendRequest = user.friendRequest
-
+    //friend requests on load
+    const user = await getCredentials();
+    const friendRequest = user.friendRequest;
+    const friendList = user.friendList;
+    console.log(friendList)
+    var requestList = [];
     if (friendRequest) { //if there is friend request
-        var displayRedDotNotification = false
-        var requestList = []
+        var RedDotNotification = false
         friendRequest.forEach(request=>{
             if (request.type === "received") { //if this request is asked from another user
-                displayRedDotNotification = true
+                RedDotNotification = true
                 var request = new FriendRequest(request.username,request.solyTag,"") //replace "" with request.profilePicture
                 requestList.push(request)
             }
         })
-        if (displayRedDotNotification) {
-            $(".redDotNotification").html(requestList.length) //then display the amount of notification
-            $(".redDotNotification").addClass("visible") // add class visible for displaying red DOT
-            requestList.forEach(request =>{
-                request.displayRequest()
-            })  
+        if (RedDotNotification) {
+            displayRedDotNotification(requestList)
         }
     }
-
-    //friend Request color red or green
-    //hover sur le bouton "Non"
-    $(".friendRequestNo").hover(function() {
-        $(this).closest(".friendRequestQuestionContainer").addClass("before");
-    }, function() {
-        $(this).closest(".friendRequestQuestionContainer").removeClass("before");
-    });
-    //click sur le bouton "Non"
-    $(".friendRequestNo").click(function(){
-        const currentRequest = $(this).closest(".friendRequestContentContainer").data("currentRequest")
-        if (currentRequest) {
-            currentRequest.deny()
+    if (friendList) {
+        for (let friend of friendList) {
+            console.log(friend)
+            friend = new Friend(friend.username,friend.solyTag,"")
+            friend.displayFriend()
         }
+    }
+    //friend request on event
+    socket.on("friendRequest",(friend)=>{
+        const request = new FriendRequest(friend.username,friend.solyTag,"") //replace "" with request.profilePicture
+        requestList.push(request)
+        request.displayRequest() // juste la nouvelle
+        $(".redDotNotification").html(requestList.length).addClass("visible")
+    })
+    
+    //friend Request color red or green
+    //click sur le bouton "Non"
+    $(document).on("click",".friendRequestNo",function(){
+        const currentRequest = $(this).closest(".friendRequestContentContainer").data("currentRequest")
+        if (currentRequest) currentRequest.deny()
         $(this).closest(".friendRequestContentContainer").remove()
     })
     //click sur le bouton "Oui"
-    $(".friendRequestYes").click(function(){
+    $(document).on("click",".friendRequestYes",function(){
         const currentRequest = $(this).closest(".friendRequestContentContainer").data("currentRequest")
-        if (currentRequest) {
-            currentRequest.allow()
-        }
+        if (currentRequest) currentRequest.allow()
         $(this).closest(".friendRequestContentContainer").remove()
     })
     // hover sur le bouton "Oui"
-    $(".friendRequestYes").hover(function() {
+    $(document).on("mouseenter",".friendRequestYes",function(){
         $(this).closest(".friendRequestQuestionContainer").addClass("after");
-    }, function() {
+    });
+    $(document).on("mouseleave",".friendRequestYes",function() {
         $(this).closest(".friendRequestQuestionContainer").removeClass("after");
     });
-
+    //hover sur le bouton "Non"
+    $(document).on("mouseenter",".friendRequestNo",function(){
+        $(this).closest(".friendRequestQuestionContainer").addClass("before");
+    });
+    $(document).on("mouseleave",".friendRequestNo",function() {
+        $(this).closest(".friendRequestQuestionContainer").removeClass("before");
+    });
+    
     const username = user.username
-
+    let string;
     function generateAnimation(name) {
         string = "hi," + name
         parent = document.getElementById("animationContainer")
@@ -272,5 +270,38 @@ document.addEventListener("DOMContentLoaded",async()=>{
                 }
             }) 
         })
+    })
+    //Styling
+    //i'll do some JQuery
+    $(".addFriendButton").on("click",()=>{
+        console.log("clicked")
+        $(".friendMenuWrapper").addClass("visible")
+        $(".friendMenu").addClass("visible")
+    })
+    $(".crossContainer").on("click",()=>{
+        $(".friendMenuWrapper").removeClass("visible")
+        $(".friendMenu").removeClass("visible")
+    })
+    //output popup
+    //popUp settings
+    function spawnPopup() {
+        const popup = $(".popUp")
+        const progressBar = $(".progressBarFilling")
+        progressBar.css("transition","width 2s ease-out")
+        popup.addClass("visible")
+        popup.one("transitionend",()=>{
+            progressBar.addClass("visible")
+            setTimeout(()=>{
+                popup.removeClass("visible")
+                popup.one("transitionend",()=>{
+                    progressBar.removeClass("visible")
+                    progressBar.css("transition","none")
+                })
+            },2000)
+        })
+    }
+    //friend Request container display
+    $(".friendRequestIcon").on("click",()=>{
+        $(".friendRequestContainer").toggleClass("visible")
     })
 })
