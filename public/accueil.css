@@ -681,9 +681,8 @@ body .asideProfile {
     background-color: rgb(20, 20, 20);
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
-    justify-content: end;
-
+    overflow-y: auto;
+    
 }
 .messageUserContainer, .messageTargetUserContainer {
     display: flex;

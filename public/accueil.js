@@ -150,22 +150,26 @@ document.addEventListener("DOMContentLoaded",async()=>{
             let mess = $(`
             <div class="messageUserContainer">
                 <div class="messageUser">
-                    <h4>${username}</h4>
-                    <p>${message}</p>
+                    <h4></h4>
+                    <p></p>
                 </div>
             </div>
             `)
+            mess.find("h4").text(username)
+            mess.find("p").text(message)
             $(".chatMain").append(mess)
         }
     function popMessageReceiver(username,message){
         let mess = $(`
         <div class="messageTargetUserContainer">
             <div class="messageTargetUser">
-                <h4>${username}</h4>
-                <p>${message}</p>
+                <h4></h4>
+                <p></p>
             </div>
         </div>
         `)
+        mess.find("h4").text(username)
+        mess.find("p").text(message)
         $(".chatMain").append(mess)
     }
 
@@ -362,6 +366,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
                     popMessageReceiver(message.send.username,message.message)
                 }
             })
+            const container = document.querySelector(".chatMain")
+            container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
         }   
     })
 
@@ -389,5 +395,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
         } else { //si celui qui reçoit n'est pas l'envoyeur
             popMessageReceiver(message.send.username,message.message) //alors 
         } 
+        const container = document.querySelector(".chatMain")
+        container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
     })
 })
