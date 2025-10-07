@@ -1,5 +1,6 @@
 const User = require("./userModel")
-
+const Conversation = require("./messageModel");
+const { connect } = require("mongoose");
 
 //mapping des utilisateur connectés
 const connectedUsers = {}
@@ -60,18 +61,21 @@ function socketHandler(io) {
             const user = await User.findById(userId)
             const targetUser = await User.findOne({solyTag:targetSolyTag})
             if (request.accepted) {
+                const convId = [user._id.toString(),targetUser._id.toString()].sort().join("_")
                 await User.findByIdAndUpdate(userId, //for user
                     {
-                        $addToSet:{friendList:targetUser._id},//directly pushes the data to the array
+                        $addToSet:{friendList:{targetUser:targetUser._id,convId:convId}},//directly pushes the data to the array
                         $pull:{friendRequest:{solyTag:targetSolyTag}} //directly pull the data from the array
                     }, 
                     {new:true})
                 await User.findOneAndUpdate({solyTag:targetSolyTag}, //for target User
                     {
-                        $addToSet:{friendList:user._id},
+                        $addToSet:{friendList:{targetUser:user._id,convId:convId}},
                         $pull:{friendRequest:{solyTag:user.solyTag}}
                     }
                 )
+                const conv = new Conversation({convId:convId})
+                conv.save()
                 socket.emit("friendRequestResponse",`vous êtes désormais ami avec ${targetUser.username}`)
             } else {
                 await User.findByIdAndUpdate(userId, //for user
@@ -87,14 +91,30 @@ function socketHandler(io) {
                 socket.emit("friendRequestResponse",`Demande d'ami de ${targetUser.username} refusée`)
             }
         })
-
+        socket.on("message",async (message)=>{
+            socket.emit("messageResponse",message)
+            const receiver = await User.findOne({solyTag:message.to.solyTag}).select("_id")
+            const conversationId = [userId.toString(),receiver._id.toString()].sort().join("_")
+            const conversation = await Conversation.findOneAndUpdate({convId:conversationId},
+                {
+                    $push:{messages:message}
+                }
+            )
+            if (connectedUsers[receiver._id]) {
+                const targetUserId = connectedUsers[receiver._id]
+                io.to(targetUserId).emit("messageResponse",message)
+            }
+            
+        })
+        //conversation load
+        socket.on("askConversation", async (friend)=>{
+            const friendId = await User.findOne({solyTag:friend}).select("_id").lean()
+            const convId = [userId.toString(),friendId._id.toString()].sort().join("_")
+            const conv = await Conversation.findOne({convId:convId}).select("messages")
+            socket.emit("askConversationResponse",{friend,conv})
+        })
             
         
-
-
-
-
-
 
         socket.on("disconnect",()=>{
             delete connectedUsers[userId]

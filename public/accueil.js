@@ -122,7 +122,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
             this.profilePicture = profilePicture
         }
         displayFriend() {
-            var content = $(`<div class="friendWrapper">
+            var content = $(
+                `<div class="friendWrapper">
                     <div class="friendUserContainer">
                         <div class="friendPictureContainer">
                             <div class="friendPicture"><img src="" alt=""></div>
@@ -137,6 +138,37 @@ document.addEventListener("DOMContentLoaded",async()=>{
             $(".friendContainer").append(content)
         }
     }
+    class Message {
+        constructor(message,sender,receiver,time) {
+            this.message = message
+            this.send = sender
+            this.to = receiver
+            this.time = time
+        }
+    }
+    function popMessageSender(username, message){
+            let mess = $(`
+            <div class="messageUserContainer">
+                <div class="messageUser">
+                    <h4>${username}</h4>
+                    <p>${message}</p>
+                </div>
+            </div>
+            `)
+            $(".chatMain").append(mess)
+        }
+    function popMessageReceiver(username,message){
+        let mess = $(`
+        <div class="messageTargetUserContainer">
+            <div class="messageTargetUser">
+                <h4>${username}</h4>
+                <p>${message}</p>
+            </div>
+        </div>
+        `)
+        $(".chatMain").append(mess)
+    }
+
     function displayRedDotNotification(requestList) {
         $(".redDotNotification").html(requestList.length) //then display the amount of notification
         $(".redDotNotification").addClass("visible") // add class visible for displaying red DOT
@@ -150,7 +182,6 @@ document.addEventListener("DOMContentLoaded",async()=>{
     const user = await getCredentials();
     const friendRequest = user.friendRequest;
     const friendList = user.friendList;
-    console.log(friendList)
     var requestList = [];
     if (friendRequest) { //if there is friend request
         var RedDotNotification = false
@@ -165,12 +196,18 @@ document.addEventListener("DOMContentLoaded",async()=>{
             displayRedDotNotification(requestList)
         }
     }
+    let conversations = {};
     if (friendList) {
+        //display friend
         for (let friend of friendList) {
-            console.log(friend)
             friend = new Friend(friend.username,friend.solyTag,"")
             friend.displayFriend()
+            socket.emit("askConversation",friend.solyTag)
         }
+        //store conversations
+        socket.on("askConversationResponse",({friend,conv})=>{
+            conversations[friend] = conv
+        })
     }
     //friend request on event
     socket.on("friendRequest",(friend)=>{
@@ -275,7 +312,6 @@ document.addEventListener("DOMContentLoaded",async()=>{
     //Styling
     //i'll do some JQuery
     $(".addFriendButton").on("click",()=>{
-        console.log("clicked")
         $(".friendMenuWrapper").addClass("visible")
         $(".friendMenu").addClass("visible")
     })
@@ -306,17 +342,52 @@ document.addEventListener("DOMContentLoaded",async()=>{
         $(".friendRequestContainer").toggleClass("visible")
     })
     let currentFriendChat = null;
+    
     $(document).on("click",".friendWrapper",function(){
-        
         $(".friendMenu,.friendMenuWrapper").removeClass("visible")
         const data = $(this).data("friend") //associe le container à son objet 
         if (data === currentFriendChat) {
-            $(".chatContainer").removeClass("visible")
             currentFriendChat = null
+            $(".chatContainer").removeClass("visible")
+            
         } else {
-            $(".chatContainer").addClass("visible")
             currentFriendChat = data
+            $(".chatContainer").addClass("visible")
+            $(".headerFriendName > h1").html(data.username)
+            const conv = conversations[data.solyTag].messages
+            conv.forEach(message=>{
+                if (message.send.solyTag === user.solyTag) { //if message was sent by user
+                    popMessageSender(user.username,message.message)
+                } else {
+                    popMessageReceiver(message.send.username,message.message)
+                }
+            })
+        }   
+    })
+
+    //message
+    const input = document.querySelector(".footerInput > textarea")
+    const submitButton = document.querySelector(".footerButton > button")
+    input.addEventListener("keydown",(e)=>{
+        if (e.key === "Enter") {
+            e.preventDefault()
+            messageSubmit()
         }
-        
+    })
+    submitButton.addEventListener("click",messageSubmit)
+    function messageSubmit(){
+        const message = input.value.trim()
+        if (message === "") return;
+        const mess = new Message(message,user,currentFriendChat,new Date())
+        socket.emit("message",mess)
+        input.value = ""
+        input.focus()
+    }
+    socket.on("messageResponse",message=>{
+        if (message.send.solyTag === user.solyTag) { //si celui qui recoit est l'envoyeur
+            popMessageSender(message.send.username,message.message) //alors l'envoyeur est le receveur
+        } else { //si celui qui reçoit n'est pas l'envoyeur
+            popMessageReceiver(message.send.username,message.message) //alors 
+        } 
     })
 })

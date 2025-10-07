@@ -9,8 +9,10 @@ const userSchema = new mongoose.Schema({
     profilePicture:{type:String,default:""},
     solyTag:{type:String,unique:true},
     friendRequest:{type:Array,default:[]},
-    friendList:[{type:mongoose.Schema.Types.ObjectId,ref:"Soly"}]
+    friendList:{type:Array,default:[]}
 });
 
-//creating an User to push to database 
-module.exports = mongoose.model("Soly", userSchema,"Users");
+
+const User = mongoose.model("Soly", userSchema,"Users"); //modèle utilisateur
+
+module.exports = User

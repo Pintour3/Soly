@@ -7,7 +7,8 @@ const isAuth = require("./auth")
 router.get("/api/getCredentials", isAuth,async (req,res)=>{
     try {
         const user = await User.findById(req.session.user.userId).select("username profilePicture solyTag friendRequest friendList")
-        const friends = await User.find({_id:{$in:user.friendList}}).select("username solyTag profilePicture -_id")
+        const targetIds = user.friendList.map(friend=>friend.targetUser)
+        const friends = await User.find({_id:{$in:targetIds}}).select("username solyTag profilePicture -_id")
         res.json({
             username: user.username,
             solyTag: user.solyTag,
