@@ -1,0 +1,6 @@
+finir le systeme de getcredentials sur toutes les pages actives du site --> je crois c'est bon
+faire un menu de personnalisation entre la loginpage et l'accueil --> fait partiellement
+modifier les cookies, allonger le max age et faire un systeme qui déconnecte l'utilisateur s'il change d'ip, et la stocker en tant qu'ip de confiance. --> reste a faire
+faire l'user interface de l'accueil --> en cours
+trouver un moyen de stocker la pdp du client dans le serveur 
+tout pour le moment...

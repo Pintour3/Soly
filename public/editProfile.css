@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+.roboto {
+    font-size: 1em;
+    font-family: "Roboto", sans-serif;
+}
+*{
+    padding: 0;
+    margin: 0;
+}
+body {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(80, 80, 80);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+.contentWrapper {
+    width: 33%;
+    height: 82vh;
+    border: 4px solid rgb(10, 255, 50);
+    border-radius: 10px;
+    color: rgb(10, 255, 50) ;
+    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
+    padding:2em 1em;
+    background-color: rgba(20, 20, 20);
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+
+}
+h1 { 
+    text-align: center;
+}
+.imageWrapper {
+    display: flex;
+    flex-direction: column-reverse;
+    height: 10em;
+    width: 80%;
+    align-items: center;
+}
+.imageWrapper input {
+    background-color: white;
+    border-radius: 0;
+
+}
+.imageWrapper label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    height: 15%;
+    width: 60%;
+    margin-top: 2%;
+    background-color: rgba(20, 20, 20);
+    border: 4px solid rgb(10, 255, 50);
+    border-radius: 10px;
+    color: rgb(10, 255, 50) ;
+    padding: 0.5em;
+    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
+    transition: all 0.2s ease-in-out;
+    &:hover {
+        box-shadow: none;
+        transform: scale(1.05);
+    }
+}

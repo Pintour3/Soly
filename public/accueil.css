@@ -1,0 +1,806 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+}
+.roboto {
+    font-family: "Roboto", sans-serif;
+}
+html {
+    width: 100%;
+    height: 100%;
+}
+body {
+    font-family:"Roboto", sans-serif;
+    background-color: rgb(20, 20, 20);
+    color: rgb(10, 255, 50);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+.asideFriends {
+    z-index: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 23%;
+    height: 100%;
+    background-color: rgb(80, 80, 80);
+    
+}
+.asideContainer {
+    position: relative;
+    box-shadow:0px 0px 10px 2px rgba(80,80,80,0.75);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    overflow: hidden;
+}
+.headerWrapper {
+    flex: 0 0 auto;
+    padding: 0.75vw 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid rgb(255, 255, 255,0.3);
+}
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 90%;
+    height: 4vw;
+    border-radius: 0.75vw;
+    font-size: 1vw;
+    background-color: rgb(20,20,20);
+}
+
+.friendFooterContainer {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 5vw;
+    background-color: rgb(20, 20, 20);
+    border-top: 2px solid rgb(255, 255, 255,0.5);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    z-index: 3;
+}
+.friendFooterContainer i {
+    font-size: 2.5vw;
+    color: white;
+    background-color: transparent;
+    position: relative;
+    margin: 0 1vw ;
+    transition: transform 0.1s ease-in-out;
+    &:hover {
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+}
+.redDotNotification {
+    height: 1.2vw;
+    aspect-ratio: 1/1;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    color: white;
+    background-color: rgb(233, 20, 20);
+    position: absolute;
+    top: -20%;
+    left: 70%;
+    font-size: 0.75vw;
+    display: none;
+}
+.redDotNotification.visible {
+    display: flex;
+}
+.friendContainer {
+    flex: 1 1 auto;
+    overflow-y: scroll;
+}
+.friendWrapper {
+    background-color: rgb(20, 20, 20);
+    height: 5vw;
+    width: 100%;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255,0.3);
+}
+.friendWrapper:hover {
+    cursor: pointer;
+}
+
+.friendRequestContainer {
+    width: 90%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(20, 20, 20);
+    height: 70%;
+    border-radius: 0.75vw;
+    margin: 0 5%;
+    bottom: -60%;
+    left: 50%;
+    z-index: 0;
+    transform: scale(0.1);
+    transition: all 0.3s ease-in-out;
+
+}
+.friendRequestContainer.visible {
+    bottom: 12.5%;
+    transform: scale(1);
+    z-index: 1;
+    left: 0;
+}
+
+.friendRequestTitleWrapper {
+    height: 20%;
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 2px solid rgba(255, 255, 255,0.3);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.friendRequestTitleContainer {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    margin: 5%;
+    padding: 5% ;
+    border-radius:0.75vw;
+    background-color: rgb(80, 80, 80);
+    font-size: 1vw;
+    white-space:nowrap;
+}
+.friendRequestContentContainer {
+    height: fit-content;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.friendRequestUserContainer, .friendUserContainer {
+    height: 5vw;
+    width: 100%;
+    display: flex;
+    position: relative;
+}
+.friendRequestPictureContainer, .friendPictureContainer {
+    width: 5vw;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 2px solid rgba(255, 255, 255,0.1);
+}
+.friendRequestPicture, .friendPicture {
+    border-radius: 30%;
+    height: 90%;
+    background-color: gray;
+    aspect-ratio: 1/1;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+}
+.friendRequestPicture:hover, .friendPicture:hover {
+    border-radius:10%;
+    cursor: pointer;
+}
+.friendCredentialsContainer {
+    position: relative;
+    display: flex;
+    flex-direction:column;
+    align-items:center;
+    height: 100%;
+    width: 60%;
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
+}
+.friendRequestCredentialsContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 50%;
+    border-right: 2px solid rgba(255, 255, 255,0.1);
+}
+.friendRequestName, .friendName {
+    top: 25%;
+    padding-left:0.5vw ;
+    position: relative;
+    white-space: nowrap;
+    font-size: 1.5vw;
+}
+.friendName {
+    padding: 0;
+}
+.friendRequestTag, .friendTag {
+    top: 25%;
+    padding-left:0.5vw ;
+    position: relative;
+    font-size: 1vw;
+    opacity: 0.5;
+}
+.friendTag {
+    padding: 0;
+}
+.friendRequestQuestionContainer {
+    height: 100%;
+    width:25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}   
+.friendRequestQuestionContainer::before {
+    content: "";
+    background-color:red ;
+    width: 150%;
+    rotate: 45deg;
+    height: 150%;
+    position: absolute;
+    top: -130%;
+    left: -130%;
+    transition: all 0.3s ease-in-out;
+}
+.friendRequestQuestionContainer::after {
+    content: "";
+    background-color: rgb(10, 220, 50);
+    width: 150%;
+    rotate: 45deg;
+    height: 150%;
+    position: absolute;
+    top: 80%;
+    left: 80%;
+    transition: all 0.3s ease-in-out;
+    z-index: -1;
+}
+
+.friendRequestQuestionContainer.before::before {
+    top:-25%;
+    left:-25%;
+}
+.friendRequestQuestionContainer.after::after {
+    top:-25%;
+    left:-25%;
+}
+
+.friendRequestYes,.friendRequestNo {
+    font-size: 2vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 40%;
+    background-color: gray;
+    border-radius: 20%;
+    position: relative;
+    transition: transform 0.1s ease-in-out;
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+    
+}
+
+.friendRequestNo {
+    right: -22.5%;
+    top: 2.5%;
+}
+.friendRequestYes {
+    right: 22.5%;
+    top: -2.5%;
+}
+.middleWrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 77%;
+    height: 100%;
+    background-color: rgb(20, 20, 20);
+    box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75) inset;
+}
+.middleContainer .nofriendContainer {
+    font-size: 2em;
+}
+.middleContainer {
+    position: relative;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.animation {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 40%;
+    background-color: transparent;
+}
+
+.dotDivContainer {
+    display: flex;
+    position: absolute;
+    background-color: transparent;
+    height: 100%;
+    transition: all 0.67s ease-in-out;
+    left: 50%;
+    padding: 0;
+    transform: rotate(0);
+}
+
+.animation .dotDivContainer .dotDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 1em;
+    padding: 0.2em;
+    height: 1em;
+    border-radius: 50px;
+    background-color: rgb(10, 255, 50);
+    color:transparent;
+    transform: rotate(180deg);
+    transition: transform 0.5s ease, color 1s ease, background-color 1s ease, font-size 1s ease;
+    transition-timing-function: cubic-bezier(.08,.6,.25,1.02);
+    
+}
+.addFriendButton{
+    width: 15vw;
+    height: 3vw;
+    border-radius: 5px;
+    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
+    border: rgb(10, 255, 50) 3px solid;
+    margin-top: 3em;
+    font-size: 1.3vw;
+    background-color: rgb(20, 20, 20);
+    color: rgba(10, 255, 50);
+    transition: box-shadow 0.2s ease-in-out,transform 0.2s ease-in-out;
+    &:hover {
+        box-shadow: none;
+        transform: scale(1.05);
+    }
+    &:focus {
+        outline: none;
+        box-shadow: none;
+        transform: scale(1.05);
+    }
+}
+
+.friendMenuWrapper {
+    position: absolute;
+    display: flex;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    width: 77%;
+    height: 100%;
+    margin: auto;
+    background-color: transparent;
+    opacity: 1;
+    pointer-events: none;
+    transition: all 1s ease;
+}
+.friendMenuWrapper.visible {
+    pointer-events: all;
+}
+
+.friendMenu {
+    aspect-ratio: 16/9;
+    border: solid rgb(10, 255,50) 4px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    height: 50%;
+    width: 70%;
+    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
+    position: relative;
+    border-radius: 10px;
+    color: rgb(10, 255, 50);
+    z-index: 10;
+    background-color: rgb(20, 20, 20);
+    opacity: 0;
+    transform: translateY(2em);
+    transition: all 0.3s ease;
+}  
+.friendMenu.visible {
+    transform:translate(0) ;
+    opacity: 1;
+}
+
+
+.inputWrapper input {
+    position: relative;
+    background-color: rgba(20, 20, 20);
+    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
+    font-size: 1.75vw;
+    color: rgb(10, 255, 50);
+    width: 40%;
+    border-radius: 10px;
+    border: rgb(10, 255, 50) 3px solid;
+    height: 2.5vw;
+    padding: 0.5vw 1.5vw;
+    margin: 2vw;
+    transition: box-shadow 0.2s ease-in-out;
+    &:hover{
+        cursor: pointer;
+    }
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    
+}
+
+input:focus + .placeholder, 
+input:valid + .placeholder {
+    transform: translate(-0.75vw,-2vw) scale(0.6);
+}
+
+.solyTagLabel {
+    margin-bottom: 2em;
+    font-size: 2.5vw;
+}
+
+.placeholder {
+    left: 15vw;
+    position: absolute;
+    z-index: 1;
+    font-size: 2vw;
+    color: rgba(10, 255, 50,0.5);
+    pointer-events: none;
+    background-color: rgb(20, 20, 20);
+    padding:0 1vw;
+    transition: transform 0.2s ease-in-out;
+    &:hover {
+        cursor: pointer;
+    }
+}
+.inputWrapper {
+    
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 1em;
+    margin-top: 0.5em;
+    justify-content: center;
+    align-items: center;
+}
+.crossContainer {
+    width: 3vw;
+    height: 3vw;
+    margin: 1em;
+    top: 0;
+    left: 0;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    
+}
+.crossContainer div{
+    width: 100%;
+    height: 15%;
+    position: absolute;
+    background-color: rgb(10, 255, 50);
+    border-radius: 10px;
+}
+.cross1 {
+    rotate: 45deg;
+    transition: rotate 0.2s ease;
+}
+.cross2{
+    rotate: -45deg;
+    transition: rotate 0.2s ease;
+}
+.crossContainer:hover .cross1 {
+    rotate: calc(90deg + 45deg);
+}
+.crossContainer:hover .cross2 {
+    rotate: calc(-45deg + 90deg);
+}
+
+body .asideProfile {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color:rgb(80, 80, 80);
+    width: 6%;
+    height: 11.5%;
+    border-radius: 0 0 0 30px;
+    z-index: 1;
+    right: 0;
+    transition: all 0.2s ease;
+}
+.asideProfile i {
+    overflow: hidden;
+    position: relative;
+    font-size: 4em;
+    right: -100%;
+    transition: all 0.2s ease;
+}
+.asideProfile i:nth-of-type(1) {
+    transition-delay: 25ms;
+    
+}
+.asideProfile i:nth-of-type(2) {
+    transition-delay: 75ms;
+}
+.asideProfile i:nth-of-type(3) {
+    transition-delay: 125ms;
+}
+.profilePick {
+    border-radius: 50px;
+    position: relative;
+    width: 4em;
+    margin: 0.3em 0 ;
+    transition: all 0.2s ease;
+}
+.asideProfile:hover {
+    height: 40.5%;
+}
+.asideProfile:hover .profilePick {
+    border-radius: 20px;
+}
+.asideProfile:hover i:nth-of-type(1),
+.asideProfile:hover i:nth-of-type(3) {
+    right: 0;
+}
+.asideProfile:hover i:nth-of-type(2) {
+    right: -5%;
+}
+
+.popUp {
+    position: absolute;
+    display: flex;
+    pointer-events: none;
+    opacity: 0;
+    width: 20%;
+    height: 10%;
+    bottom: 2%;
+    right: 50%;
+    translate: 50%;
+    background-color: rgb(20, 20, 20);
+    color: rgb(10, 255, 50);
+    border-radius: 5px;
+    font-size: 1em;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-1.6em);
+    transition: all 1s ease ;
+}
+.popUp.visible {
+    opacity: 1;
+    transform:translateY(0)
+}
+      
+.progressBarEmpty {
+    width: 100%;
+    height:5%;
+    background-color: gray;
+    position: absolute;
+    bottom: 0;
+    border-radius: 0 0 10px 10px ;
+}
+.progressBarFilling {
+    width: 0%;
+    height: 5%;
+    background-color: rgb(10, 255, 50);
+    bottom: 0;
+    position: absolute;
+    border-radius: 0 0 10px 10px;
+    transform-origin: center;
+    transition: width 2s ease-out;
+    
+}
+.progressBarFilling.visible {
+    width: 100%;
+}
+
+
+.chatContainer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: 0;
+    display: flex;
+    transition: all 0.5s ease-in-out;
+    transform: translateX(-100%) scale(0);
+    z-index: 0;
+}
+.chatContainer.visible {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(0) scale(1);
+
+}
+#particles-js {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 0;
+}
+.chatContent {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+.chatContent > .chatHeader {
+    width: 100%;
+    height: 10%;
+    z-index: 3;
+    background-color: rgb(50, 50, 50);
+    box-shadow: 0px 2px 10px 2px rgb(20,20,20,0.5);
+}
+
+.headerFriendInfo {
+    height: 100%;
+    width: fit-content;
+    display: flex;
+    justify-content: left;
+    padding-left:0.5em;
+    align-items: center;
+    position: relative;
+}
+.headerFriendName {
+    height: 100%;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    padding: 0 1em;
+    box-sizing: border-box;
+}
+.headerFriendName > h1 {
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.chatContent > .chatMain {
+    width: 100%;
+    height: 80%;
+    background-color: rgb(20, 20, 20);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    
+}
+.messageUserContainer, .messageTargetUserContainer {
+    display: flex;
+    width: 100%;
+    padding: 0 1em 1em 1em;
+    z-index: 1;
+    box-sizing: border-box;
+}
+.messageTargetUserContainer {
+    justify-content: right;
+    box-sizing: border-box;
+}
+.messageUser, .messageTargetUser {
+    background-color: rgb(50, 50, 50);
+    z-index: 2;
+    position: relative;;
+    display: inline-block;
+    min-height: 3em;
+    min-width: 10em;
+    max-width: 30em;
+    padding: 0.5em;
+    border-radius: 5px;
+}
+
+.messageUser > h4, .messageTargetUser > h4 {
+    padding-bottom: 0.5em;
+    text-decoration: underline;
+}
+.messageUser > p, .messageTargetUser > p {
+    display: inline-block;
+    position: relative;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap:anywhere;
+}
+
+.chatFooter{
+    width: 100%;
+    height: 10%;
+    z-index: 1;
+    position: relative;
+    display: flex;
+    background-color: rgb(50, 50, 50);
+}
+
+.chatFooter > .footerIcons {
+    position: relative;
+    height: 100%;
+    width: 13%;
+    display: flex;
+    font-size: 2em;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.footerIcons > i {
+    transition: transform 0.1s ease-in-out;
+}
+.footerIcons > i:hover {
+    transform: scale(1.1);
+}
+
+.chatFooter > .footerInput {
+    width: 77%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footerInput > textarea {
+    resize: none;
+    position: relative;
+    background-color: rgba(20, 20, 20);
+    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
+    font-size: 1.3em;
+    color: rgb(10, 255, 50);
+    height: 80%;
+    width: 90%;
+    border-radius: 10px;
+    border: rgb(10, 255, 50) 3px solid;
+    transition: box-shadow 0.2s ease-in-out;
+    padding: 0.5em 0.5em;
+    box-sizing: border-box;
+    &:hover{
+        cursor: pointer;
+    }
+}
+.footerInput > textarea:focus {
+    outline: none;
+    box-shadow: none;
+}   
+
+.chatFooter > .footerButton {
+    width: 10%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footerButton > button {
+    border-radius: 5px;
+    width: 80%;
+    height: 77.5%;
+    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
+    border: rgb(10, 255, 50) 3px solid;
+    font-size: 1.5em;
+    background-color: rgb(20, 20, 20);
+    color: rgba(10, 255, 50);
+    transition: box-shadow 0.2s ease-in-out,transform 0.2s ease-in-out;
+    &:hover {
+        box-shadow: none;
+        transform: scale(1.05);
+    }
+    &:active {
+        outline: none;
+        box-shadow: none;
+        transform: scale(1.1);
+    }
+}

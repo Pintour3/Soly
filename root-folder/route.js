@@ -1,0 +1,176 @@
+const express = require("express")
+const path = require("path")
+const router = express.Router()
+const isAuth = require("./auth")
+const User = require("./userModel")
+const upload = require("./multer")
+const fs = require("fs")
+const isUnverifAuth = require("./unverifAuth")
+
+function homeRedirect(req,res){
+    const user = req.session.user
+    if (!user){
+        return res.sendFile(path.join(__dirname,"..","public","index.html"))
+    }
+    if (!user.verified) {
+        return res.sendFile(path.join(__dirname,"..","public","index.html"))
+    }
+    if (!user.username) {
+        return res.redirect("/editProfile")
+    }
+    return res.redirect("/accueil")
+}
+
+//landing
+
+router.get(["/","/index.html"],homeRedirect);
+
+
+//editProfile
+
+router.get("/editProfile",isAuth,(req,res)=>{
+    res.sendFile(path.join(__dirname,"..","public","editProfile.html"))
+})
+router.get("/emailVerif",isUnverifAuth,(req,res)=>{
+    res.sendFile(path.join(__dirname,"..","public","emailVerif.html"))
+})
+
+//if the user didn't have a username, redirect to edit profile
+
+router.get(['/accueil',"/accueil.html"], isAuth,async(req, res) => {
+    try {
+        const user = await User.findById(req.session.user.userId).select("username")
+        if (user.username) {
+            req.session.user.username = user.username
+            res.sendFile(path.join(__dirname,"..", 'public', 'accueil.html'));
+        } else {
+            return res.redirect("editProfile")
+        }
+    } catch (error) {
+        console.error(error)
+    }
+});
+//route to picture folder
+router.use("/upload",express.static("upload"))
+
+
+
+
+//email verif
+const nodemailer = require("nodemailer")
+const crypto = require("crypto");
+router.post("/emailVerif",isUnverifAuth, async (req,res)=>{
+    try {
+        //get user and recreate token if needed
+        //we send a mail to the client
+        //if the token MAIL is the same as the user one, then verified = true
+        console.log("mail must be sent")
+        const user = await User.findById(req.session.user.userId);
+        if (!user) {return res.status(404).json({ message: "Utilisateur non trouvé" });}
+        if (user.verified) {return res.status(400).json({message:"Compte déjà vérifié"})}
+        if (!user.verificationToken ){
+            user.verificationToken = crypto.randomBytes(32).toString("hex");
+            await user.save();
+        }
+        const transporter = nodemailer.createTransport({
+            host:"mail.infomaniak.com",
+            port:587,
+            auth: {
+                user:process.env.MAIL_USERNAME,
+                pass:process.env.MAIL_PASSWORD
+            }
+        })
+        const verifURL = `https://soly.arthur-maye.ch/checkToken?token=${user.verificationToken}` 
+        const mailOptions = {
+            from:process.env.MAIL_USERNAME,
+            to:user.email,
+            subject:"Verification de votre adresse e-mail",
+            html:`<p>merci de vous inscrire ! cliquez sur le lien ci dessous pour confirmer que cette adresse vous appartient :</p>
+            <a href=${verifURL}>Verifiez maintenant !</a>`
+        }
+        await transporter.sendMail(mailOptions)
+        res.json({message:"mail envoyé"})
+    } catch(err) {
+        console.error(err)
+    }
+})
+router.get("/checkToken",async (req,res)=> {
+    console.log("token CHECK")
+    const {token} = req.query
+    if (!token) {res.send(400).send("TOKEN INTROUVABLE")}
+    try {
+        const user = await User.findOne({verificationToken:token})
+        if (!user ) {res.send(400).send("TOKEN INVALIDE")}
+        user.verified = true
+        user.verificationToken = undefined
+        await user.save()
+        if (req.session && req.session.user && req.session.user.userId.toString() === user._id.toString()) {
+            req.session.user.verified = true
+        } 
+        res.redirect("/editProfile")
+    }catch(err) {
+        console.error(err)
+        res.status(500).send("erreur du serveur ... ")
+    }
+})
+
+//partie personnalisation utilisateur
+router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>{
+    try {
+        const userId = req.session.user.userId
+        const user = await User.findById(userId)
+        let solyTag;
+        if (!user.solyTag) { // si l'user n'a pas de solytag
+            let isUnique = false;
+            while(!isUnique) { //on en fabrique un
+                solyTag = req.body.username + `#${Math.floor(Math.random()*9000) + 1000}`
+                const existingUser = await User.findOne({solyTag})
+                if (!existingUser || existingUser._id.toString() === userId.toString()) {
+                    isUnique = true
+                }
+            }
+        } else {
+            solyTag = user.solyTag
+        }
+        const updateData = {
+            username:req.body.username,
+            solyTag:solyTag,
+        }
+        //if file is imported
+        if (req.file) {
+            // user
+            const user = await User.findById(userId)
+            // previous picture
+            const previousPicture = user.profilePicture
+            //if there is one 
+            if (previousPicture) {
+                const oldPath = path.join(__dirname,previousPicture)
+                fs.unlink(oldPath,(err)=>{
+                    if (err) {
+                        console.error("erreur lors de la suppression ", err)
+                    } else {
+                        console.log("ancienne image supprimée")
+                    }
+                })
+            }
+            //new picture
+            const imageUrl = `/upload/${req.file.filename}`;
+            updateData.profilePicture = imageUrl
+
+        }
+        //update User
+        const updateUser = await User.findByIdAndUpdate(req.session.user.userId,updateData,{new:true});
+
+        //update Session
+        req.session.user = {
+            userId:updateUser._id,
+            username:updateUser.username,
+            verified:updateUser.verified
+        }
+        return res.status(201).send()
+    } catch (error) {
+        console.error(error)
+    }
+})
+
+module.exports = router

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" href="index.css">
+    <link rel="shortcut icon" href="fav.ico" type="image/x-icon">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>SolY | Login</title>
+</head>
+<body class="roboto-serif">
+    <main>
+        <div class="form-container roboto">
+            <div class="containerMoove">
+                <div class="goToLogin">
+                    <h1>Bienvenue !</h1>
+                    <p>
+                        Entre tes identifiants pour t'inscrire sur Soly !
+                    </p>
+                    <p>
+                        Déja un Compte ?
+                    </p>
+                    <button id="goToLogin">Connexion</button>
+                </div>
+                <div class="goToRegister">
+                    <h1>Heureux de vous revoir !</h1>
+                    <p>
+                        Entre tes identifiants pour te connecter sur Soly !
+                    </p>
+                    <p>
+                        Pas encore de compte ?<br> Inscris-toi !
+                    </p>
+                    <button id="goToRegister">Inscription</button>
+                </div>
+            </div>
+            <div class="formWrapper">
+                <form class="registerForm" id="registerForm" action="/register" method="POST" autocomplete="off">
+                    <h1>Créer un compte</h1>
+                    <div class="inputWrapper">
+                        <input id="emailRegister" type="email" name="email" required>
+                        <label class="placeholder">adresse e-mail</label>
+                        <button title="email" type="button" id="emailSuggest"></button>
+                    </div>
+                    <div class="inputWrapper">
+                        <input type="password" name="password" required autocomplete="new-password">
+                        <label class="placeholder">Mot de passe</label>
+                    </div>
+                    
+                    <button type="submit" id="submitRegister">Valider</button>
+                </form>
+                
+            </div>
+            <div class="formWrapper">
+                <form class="loginForm" id="loginForm" action="/login" method="POST" >
+                    
+                    <h1>Connexion</h1>
+                    <div class="inputWrapper">
+                        <input id="loginUsername" type="email" name="email" required>  
+                        <label class="placeholder">Nom d'utilisateur</label>
+                    </div>
+                    <div class="inputWrapper">
+                        <input type="password" name="password" required>
+                        <label class="placeholder">Mot de passe</label>
+                    </div>
+                    <button type="submit" id="submitLogin">Valider</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <div class="popUpRegister">
+        <span id="output" class="roboto output"></span>
+        <div class="progressBarEmpty">
+        </div>
+        <div class="progressBarFilling">
+        </div>
+    </div>
+    <footer class="roboto">
+        <div class="copyrightContainer">
+            <span class="copyright"> Designed by Pintoure — 2025 ©</span>
+        </div>
+    </footer>
+</body>
+</html>

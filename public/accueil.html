@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="accueil.css">
+    <script type="module" src="accueil.js"></script>
+    <link rel="shortcut icon" href="fav.ico" type="image/x-icon">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script src="https://kit.fontawesome.com/f33d721ffe.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="particles.js"></script>
+    <title>Soly | Accueil</title>
+</head>
+<body>
+    <aside class="asideFriends">
+        <div class="asideContainer">
+            <div class="headerWrapper">
+                <div class="headerContainer">
+                    <h1>Messages ● 📬</h1>
+                </div>
+            </div>
+            <div class="friendContainer">          
+            </div>
+        </div>
+        <div class="friendRequestContainer">
+            <header class="friendRequestTitleWrapper">
+                <div class="friendRequestTitleContainer">
+                    <h1 class="friendRequestTitle">
+                        Demande(s) d'ami
+                    </h1>
+                </div> 
+            </header>
+        </div>
+        <footer class="friendFooterContainer">
+            <i class="fa fa-user-group friendRequestIcon">
+                <div class="redDotNotification"></div>
+            </i>
+        </footer>
+    </aside>
+    <aside class="asideProfile">
+            <img id="profilePicture" class="profilePicture" src="" alt="">
+            <i class="fa fa-gear"></i>
+            <i class="fa fa-sign-out" id="logout"></i>
+            <i class="fa fa-info-circle"></i>
+    </aside>
+    <main class="middleWrapper">
+        <div class="middleContainer">
+            <div id="animationContainer" class="animation">
+                
+            </div>
+            <p class="nofriendContainer">
+                Pas encore d'ami ?
+            </p>
+            <button class="addFriendButton" type="button">Ajoutes-les ici !</button>
+        </div>
+        <div class="chatContainer">
+            <div class="chatContent">
+                <header class="chatHeader">
+                    <div class="headerFriendInfo">
+                        <div class="friendPicture">
+                            <img src="" alt="">
+                        </div>
+                        <div class="headerFriendName">
+                            <h1></h1>
+                        </div>
+                    </div>
+                </header>
+                <main class="chatMain">
+                </main>
+                <footer class="chatFooter">
+                    <div class="footerIcons">
+                        <i class="fa-regular fa-face-smile"></i>
+                        <i class="fa-regular fa-file"></i>
+                    </div>
+                    <div class="footerInput">
+                        <textarea class="roboto"  rows="1" cols="50" placeholder="écrivez votre message ... "></textarea>
+                    </div>
+                    <div class="footerButton">
+                        <button>
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </footer>
+            </div>
+            <div id="particles-js"></div>
+        </div>
+        
+    </main>
+    <div class="friendMenuWrapper">
+        <div class="friendMenu">
+            <div class="crossContainer">
+                <div class="cross1"></div>
+                <div class="cross2"></div>
+            </div>
+            <label class="solyTagLabel" for="text">Entrez le Soly-Tag de votre ami :</label>
+                <div class="inputWrapper">
+                    <input id="solyTagInput" required type="text" placeholder="">
+                    <label class="placeholder" for="placeholder">Soly-Tag</label>
+                </div>
+                <button class="addFriendButton" id="solyTagButton" type="submit">envoyer</button>
+        </div>
+    </div>
+    <div class="popUp">
+        <span id="output" class="roboto output"></span>
+        <div class="progressBarEmpty">
+        </div>
+        <div class="progressBarFilling">
+        </div>
+    </div>
+</body>
+</html>
