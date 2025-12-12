@@ -6,6 +6,7 @@ const User = require("./userModel")
 const upload = require("./multer")
 const fs = require("fs")
 const isUnverifAuth = require("./unverifAuth")
+const {updateSession} = require("./updateSession")
 
 function homeRedirect(req,res){
     const user = req.session.user
@@ -94,10 +95,12 @@ router.post("/emailVerif",isUnverifAuth, async (req,res)=>{
         console.error(err)
     }
 })
+
+//when we clic on the mail link
 router.get("/checkToken",async (req,res)=> {
     console.log("token CHECK")
     const {token} = req.query
-    if (!token) {res.send(400).send("TOKEN INTROUVABLE")}
+    if (!token) {res.status(400).send("TOKEN INTROUVABLE")}
     try {
         const user = await User.findOne({verificationToken:token})
         if (!user ) {res.send(400).send("TOKEN INVALIDE")}
@@ -106,7 +109,9 @@ router.get("/checkToken",async (req,res)=> {
         await user.save()
         if (req.session && req.session.user && req.session.user.userId.toString() === user._id.toString()) {
             req.session.user.verified = true
-        } 
+        } else {
+            await updateSession(user._id,{"session.user.verified":true})
+        }
         res.redirect("/editProfile")
     }catch(err) {
         console.error(err)
@@ -137,26 +142,34 @@ router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res
             solyTag:solyTag,
         }
         //if file is imported
+        const previousPicture = user.profilePicture
         if (req.file) {
             // user
-            const user = await User.findById(userId)
             // previous picture
-            const previousPicture = user.profilePicture
-            //if there is one 
+            //if there is one before this 
             if (previousPicture) {
-                const oldPath = path.join(__dirname,previousPicture)
-                fs.unlink(oldPath,(err)=>{
-                    if (err) {
-                        console.error("erreur lors de la suppression ", err)
-                    } else {
-                        console.log("ancienne image supprimée")
-                    }
-                })
+                if (previousPicture !== "/upload/default.webp") { //not delete default picture
+                    const oldPath = path.join(__dirname,previousPicture)
+                    fs.unlink(oldPath,(err)=>{
+                        if (err) {
+                            console.error("erreur lors de la suppression ", err)
+                        } else {
+                            console.log("ancienne image supprimée")
+                        }
+                    })
+                }
             }
             //new picture
             const imageUrl = `/upload/${req.file.filename}`;
             updateData.profilePicture = imageUrl
 
+        } else {
+            
+            //établir une photo par default si rien avant 
+            if (!previousPicture) {
+                const imageUrl = "/upload/default.webp";
+                updateData.profilePicture = imageUrl
+            }
         }
         //update User
         const updateUser = await User.findByIdAndUpdate(req.session.user.userId,updateData,{new:true});

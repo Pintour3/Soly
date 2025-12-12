@@ -4,9 +4,9 @@ const User = require("./userModel")
 const isAuth = require("./auth")
 const isUnverifAuth = require("./unverifAuth")
 //requete au serveur pour récupérer les informations utilisateur chez le client
-router.get("/api/getCredentials", isUnverifAuth,async (req,res)=>{
+router.get("/api/getCredentials", isAuth,async (req,res)=>{
     try {
-        const user = await User.findById(req.session.user.userId).select("email username profilePicture solyTag friendRequest friendList")
+        const user = await User.findById(req.session.user.userId).select("email username solyTag profilePicture friendRequest friendList")
         const targetIds = user.friendList.map(friend=>friend.targetUser)
         const friends = await User.find({_id:{$in:targetIds}}).select("username solyTag profilePicture -_id")
         res.json({
@@ -21,6 +21,16 @@ router.get("/api/getCredentials", isUnverifAuth,async (req,res)=>{
         console.error(error)
     }    
 })
+//requete de l'e-mail
+router.get("/api/getEmail", isUnverifAuth,async (req,res)=>{
+    try {
+        const user = await User.findById(req.session.user.userId).select("email")
+        res.json({email:user.email})
+    }catch (error) {
+        console.error(error)
+    }    
+})
+
 
 router.post("/api/logout", isAuth,(req,res)=>{
     req.session.destroy(async (err)=>{

@@ -1,4 +1,3 @@
-//window.socket = io('http://localhost:3001')
 const url = window.location.href
 if (url.includes(".html")){
     window.location.href = "/"
@@ -9,7 +8,7 @@ document.addEventListener("DOMContentLoaded",(event)=>{
     const emailRegisterInput = document.getElementById("emailRegister")
     const emailRegisterSuggest = document.getElementById("emailSuggest")
     //y'a du travail a faire ici : remplacer le contenu après "@" par hotmail,gmail,outlook,bluewin,yahoo
-    //et faut règler le problème de l'assistant firefox qui se fout là où il faut pas ce con
+    //et faut règler le problème de l'assistant firefox qui se fout là où il faut pas
     let purposal = ["hotmail.com","gmail.com","outlook.com","yahoo.com","rpn.ch","icloud.com","bluewin.ch"]
     emailRegisterInput.addEventListener("keyup",()=>{
         if (emailRegisterInput.value.includes("@")) {
@@ -23,6 +22,18 @@ document.addEventListener("DOMContentLoaded",(event)=>{
     emailRegisterSuggest.addEventListener("click",()=>{
         emailRegisterInput.value = retourne
     })
+
+    document.getElementById("openForm").addEventListener("click",(e)=>{
+        e.preventDefault()
+        document.querySelector(".description").style.display = "none"
+        document.querySelector(".registerWrapper").classList.add("visible")
+    })
+    document.querySelector(".logIn").addEventListener("click",()=>{
+        document.querySelector(".description").style.display = "none"
+        document.querySelector(".loginWrapper").classList.add("visible")
+    })
+
+
 
 
     form1.addEventListener("submit", async (event) => {
@@ -109,17 +120,5 @@ document.addEventListener("DOMContentLoaded",(event)=>{
         $(".containerMoove").toggleClass("mooved")
         $(".loginForm , .registerForm").toggleClass("mooved")
         $(".goToLogin , .goToRegister").toggleClass("mooved")      
-    })
-
-
-    //background moove
-    document.addEventListener("mousemove",(event)=>{
-        var x = event.clientX/window.innerWidth
-        var y = event.clientY/window.innerHeight
-        //value should be : minimum 40%, max 60%
-        //so x  = 0 --> 40%, x = 0.5 --> 50%, x = 1 --> 60%
-        var newX = 40 + x*20
-        var newY = 40 + y*20
-        $("body").css("background-position",`${newX}% ${newY}%`)
     })
 })

@@ -6,36 +6,42 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="index.js"></script>
     <link rel="stylesheet" href="index.css">
-    <link rel="shortcut icon" href="fav.ico" type="image/x-icon">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=call_made" />
+
+    <link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="shortcut icon" href="assets/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Soly" />
+    <link rel="manifest" href="assets/site.webmanifest" />
     <title>SolY | Login</title>
 </head>
-<body class="roboto-serif">
+<body>
+    <div class="circle"></div>
+    <div class="circle2"></div>
     <main>
-        <div class="form-container roboto">
-            <div class="containerMoove">
-                <div class="goToLogin">
-                    <h1>Bienvenue !</h1>
-                    <p>
-                        Entre tes identifiants pour t'inscrire sur Soly !
-                    </p>
-                    <p>
-                        Déja un Compte ?
-                    </p>
-                    <button id="goToLogin">Connexion</button>
-                </div>
-                <div class="goToRegister">
-                    <h1>Heureux de vous revoir !</h1>
-                    <p>
-                        Entre tes identifiants pour te connecter sur Soly !
-                    </p>
-                    <p>
-                        Pas encore de compte ?<br> Inscris-toi !
-                    </p>
-                    <button id="goToRegister">Inscription</button>
-                </div>
+        <div class="description">
+            <div class="titleWrapper">
+                <h1>Soly</h1>
+                <img src="assets/logo.png" alt="">
             </div>
-            <div class="formWrapper">
+            <div class="citationWrapper">
+                <h3>Send. Receive. <br> and Smile !</h3>
+            </div>
+            <div class="paragraphWrapper">
+                <p>
+                    Soly est une messagerie indépendante <br> qui vous permet de communiquez <i>n'importe où</i>, <br> <i>sans limite</i> et de manière <i>sécurisée</i>. <br>
+                </p>
+            </div>
+            <div class="buttonWrapper">
+                <button class="logIn">Log in <i class="material-symbols-outlined">call_made</i></button>
+            </div>
+            <span class="signInLabel">Nouveau membre ? <a id="openForm" href="">Inscris-toi</a></span>
+            <span class="author">Conçu et développé en Suisse par <a href="https://arthur-maye.ch" target="_blank" name="mon portfolio">Arthur Maye</a> ! <span>🇨🇭</span></span> 
+        </div>
+        <div  class="form-container">
+            <div class="registerWrapper">
                 <form class="registerForm" id="registerForm" action="/register" method="POST" autocomplete="off">
                     <h1>Créer un compte</h1>
                     <div class="inputWrapper">
@@ -49,12 +55,10 @@
                     </div>
                     
                     <button type="submit" id="submitRegister">Valider</button>
-                </form>
-                
+                </form>                
             </div>
-            <div class="formWrapper">
+            <div class="loginWrapper">
                 <form class="loginForm" id="loginForm" action="/login" method="POST" >
-                    
                     <h1>Connexion</h1>
                     <div class="inputWrapper">
                         <input id="loginUsername" type="email" name="email" required>  
@@ -76,10 +80,6 @@
         <div class="progressBarFilling">
         </div>
     </div>
-    <footer class="roboto">
-        <div class="copyrightContainer">
-            <span class="copyright"> Designed by Pintoure — 2025 ©</span>
-        </div>
-    </footer>
+
 </body>
 </html>

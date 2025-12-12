@@ -2,7 +2,7 @@ const emailLabel = document.getElementById("email")
 
 //collect user data
 
-fetch("/api/getCredentials",{
+fetch("/api/getEmail",{
     method:"GET",
     credentials:"include"
 })

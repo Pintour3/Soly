@@ -184,14 +184,26 @@ body {
     align-items: center;
     border-right: 2px solid rgba(255, 255, 255,0.1);
 }
+
 .friendRequestPicture, .friendPicture {
-    border-radius: 30%;
-    height: 90%;
-    background-color: gray;
+    height: 90%;    
     aspect-ratio: 1/1;
+    background-color: gray;
+    display: flex;
+    overflow: hidden;
     position: relative;
+    border-radius: 10px;
     transition: all 0.2s ease-in-out;
 }
+.friendPicture > img, .friendRequestPicture > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+
+
 .friendRequestPicture:hover, .friendPicture:hover {
     border-radius:10%;
     cursor: pointer;
@@ -523,49 +535,35 @@ body .asideProfile {
     flex-direction: column;
     background-color:rgb(80, 80, 80);
     width: 6%;
-    height: 11.5%;
-    border-radius: 0 0 0 30px;
+    height: fit-content;
+    padding: 0.5em;
+    border-radius: 10px;
     z-index: 1;
-    right: 0;
+    right: .5em;
+    top:.5em;
     transition: all 0.2s ease;
+    gap: 1em;
 }
 .asideProfile i {
     overflow: hidden;
     position: relative;
-    font-size: 4em;
-    right: -100%;
-    transition: all 0.2s ease;
+    font-size: 3em;
 }
-.asideProfile i:nth-of-type(1) {
-    transition-delay: 25ms;
-    
-}
-.asideProfile i:nth-of-type(2) {
-    transition-delay: 75ms;
-}
-.asideProfile i:nth-of-type(3) {
-    transition-delay: 125ms;
-}
-.profilePick {
-    border-radius: 50px;
+.profilePicture {
+    width: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    overflow: hidden;
     position: relative;
-    width: 4em;
-    margin: 0.3em 0 ;
-    transition: all 0.2s ease;
+    border-radius: 10px;
 }
-.asideProfile:hover {
-    height: 40.5%;
+.profilePicture > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
-.asideProfile:hover .profilePick {
-    border-radius: 20px;
-}
-.asideProfile:hover i:nth-of-type(1),
-.asideProfile:hover i:nth-of-type(3) {
-    right: 0;
-}
-.asideProfile:hover i:nth-of-type(2) {
-    right: -5%;
-}
+
 
 .popUp {
     position: absolute;
@@ -680,9 +678,8 @@ body .asideProfile {
     height: 80%;
     background-color: rgb(20, 20, 20);
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow-y: auto;
-    
 }
 .messageUserContainer, .messageTargetUserContainer {
     display: flex;

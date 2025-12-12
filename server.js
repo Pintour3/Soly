@@ -5,11 +5,17 @@ const app = express();
 const session = require("express-session")
 const server = http.createServer(app);
 const { urlencoded } = require("body-parser");
-app.use(express.static(path.join(__dirname, 'public'), {index: false}));
 app.use(urlencoded({extended: true}))
 app.use(express.json())
 require('dotenv').config()
 
+//anti "/" at the end of url
+app.use((req, res, next) => {
+  if (req.path.length > 1 && req.path.endsWith("/")) {
+    return res.redirect(301, req.path.slice(0, -1));
+  }
+  next();
+});
 
 
 //files imports
@@ -18,6 +24,11 @@ const login = require("./root-folder/login")
 const api = require("./root-folder/api")
 const {store} = require("./root-folder/database")
 const socketHandler = require("./root-folder/socket")
+
+app.use(express.static(path.join(__dirname, 'public'), {index: false,redirect:false}));
+
+
+
 //cookie and sessions
 
 const sessionMiddleware = session({

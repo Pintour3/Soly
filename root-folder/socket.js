@@ -1,6 +1,5 @@
 const User = require("./userModel")
 const Conversation = require("./messageModel");
-const { connect } = require("mongoose");
 
 //mapping des utilisateur connectés
 const connectedUsers = {}
@@ -113,7 +112,10 @@ function socketHandler(io) {
             const conv = await Conversation.findOne({convId:convId}).select("messages")
             socket.emit("askConversationResponse",{friend,conv})
         })
-            
+        
+        //#########################
+        //MAIL CONFIRM UPDATE 
+        
         
 
         socket.on("disconnect",()=>{

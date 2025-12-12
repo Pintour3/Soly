@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
                 credentials:"include"
             });
             if (response.ok) {
-                //return credentials : username, email and profile Picture
+                //return all the data needed :
                 const userdata = await response.json()
                 return userdata
             } else {
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
             var content =  $(`<div class="friendRequestContentContainer">
                         <div class="friendRequestUserContainer">
                             <div class="friendRequestPictureContainer">
-                                <div class="friendRequestPicture"><img src="${this.profilePicture}" alt=""></div>
+                                <div class="friendRequestPicture"><img src=${this.profilePicture} alt=""></div>
                             </div>
                             <div class="friendRequestCredentialsContainer">
                                 <h1 class="friendRequestName">${this.username}</h1>
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
                 `<div class="friendWrapper">
                     <div class="friendUserContainer">
                         <div class="friendPictureContainer">
-                            <div class="friendPicture"><img src="" alt=""></div>
+                            <div class="friendPicture"><img src="${this.profilePicture}" alt=""></div>
                         </div>
                         <div class="friendCredentialsContainer">
                             <h1 class="friendName">${this.username}</h1>
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
             this.time = time
         }
     }
-    function popMessageSender(username, message){
+    function popMessageReceiver(username, message){
             let mess = $(`
             <div class="messageUserContainer">
                 <div class="messageUser">
@@ -157,11 +157,11 @@ document.addEventListener("DOMContentLoaded",async()=>{
                 </div>
             </div>
             `)
-            mess.find("h4").text(username)
-            mess.find("p").text(message)
-            $(".chatMain").append(mess)
+            mess.find("h4").text(username) //prevent SQL injection
+            mess.find("p").text(message) //prevent SQL injection
+            $(".chatMain").prepend(mess)
         }
-    function popMessageReceiver(username,message){
+    function popMessageSender(username,message){
         let mess = $(`
         <div class="messageTargetUserContainer">
             <div class="messageTargetUser">
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
         `)
         mess.find("h4").text(username)
         mess.find("p").text(message)
-        $(".chatMain").append(mess)
+        $(".chatMain").prepend(mess)
     }
 
     function displayRedDotNotification(requestList) {
@@ -186,6 +186,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
 
     //friend requests on load
     const user = await getCredentials();
+    console.log(user)
     const friendRequest = user.friendRequest;
     const friendList = user.friendList;
     var requestList = [];
@@ -194,7 +195,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
         friendRequest.forEach(request=>{
             if (request.type === "received") { //if this request is asked from another user
                 RedDotNotification = true
-                var request = new FriendRequest(request.username,request.solyTag,"") //replace "" with request.profilePicture
+                var request = new FriendRequest(request.username,request.solyTag,request.profilePicture) 
                 requestList.push(request)
             }
         })
@@ -206,7 +207,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
     if (friendList) {
         //display friend
         for (let friend of friendList) {
-            friend = new Friend(friend.username,friend.solyTag,"")
+            friend = new Friend(friend.username,friend.solyTag,friend.profilePicture)
             friend.displayFriend()
             socket.emit("askConversation",friend.solyTag)
         }
@@ -217,7 +218,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
     }
     //friend request on event
     socket.on("friendRequest",(friend)=>{
-        const request = new FriendRequest(friend.username,friend.solyTag,"") //replace "" with request.profilePicture
+        const request = new FriendRequest(friend.username,friend.solyTag,friend.profilePicture) //replace "" with request.profilePicture
         requestList.push(request)
         request.displayRequest() // juste la nouvelle
         $(".redDotNotification").html(requestList.length).addClass("visible")
@@ -251,6 +252,10 @@ document.addEventListener("DOMContentLoaded",async()=>{
         $(this).closest(".friendRequestQuestionContainer").removeClass("before");
     });
     
+    //profile picture on the aside right
+    const userProfilePicture = user.profilePicture
+    const profilePictureContainer = document.getElementById("profilePicture")
+    profilePictureContainer.setAttribute("src",userProfilePicture)
     const username = user.username
     let string;
     function generateAnimation(name) {
@@ -360,7 +365,10 @@ document.addEventListener("DOMContentLoaded",async()=>{
             currentFriendChat = data
             $(".chatContainer").addClass("visible")
             $(".headerFriendName > h1").html(data.username)
-            const conv = conversations[data.solyTag].messages
+            const conv = conversations[data.solyTag].messages //on prends la conversation correspondant a l'utilisateur
+            //on clear le container de chat
+            const container = document.querySelector(".chatMain")
+            container.innerHTML = ""
             conv.forEach(message=>{
                 if (message.send.solyTag === user.solyTag) { //if message was sent by user
                     popMessageSender(user.username,message.message)
@@ -368,7 +376,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
                     popMessageReceiver(message.send.username,message.message)
                 }
             })
-            const container = document.querySelector(".chatMain")
+            
+            
             container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
         }   
     })
@@ -379,11 +388,11 @@ document.addEventListener("DOMContentLoaded",async()=>{
     input.addEventListener("keydown",(e)=>{
         if (e.key === "Enter") {
             e.preventDefault()
-            messageSubmit()
+            messageSubmit() //quand on envoie un message
         }
     })
     submitButton.addEventListener("click",messageSubmit)
-    function messageSubmit(){
+    function messageSubmit(){ 
         const message = input.value.trim()
         if (message === "") return;
         const mess = new Message(message,user,currentFriendChat,new Date())

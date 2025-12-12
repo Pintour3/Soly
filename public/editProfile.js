@@ -19,15 +19,15 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         var file = event.target.files[0]
         //si il y a un fichier
         if (file) {
-            //api asyncrone qui va lire l'image inserée
+            //api qui va lire l'image inserée
             var reader = new FileReader();
             //quand l'image est chargée
             reader.onload = (e)=>{
                 //cible l'image
                 img.src = e.target.result;
                 //propriété de la taille de l'image
-                img.style.width = "150px"
-                img.style.height = "150px"
+                img.style.width = "15em"
+                img.style.aspectRatio = "1 / 1"
                 img.id = "picture"
                 //apporter l'image
                 div.appendChild(img)
