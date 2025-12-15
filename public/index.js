@@ -2,40 +2,59 @@ const url = window.location.href
 if (url.includes(".html")){
     window.location.href = "/"
 } 
+
+window.onload = () =>{
+    const current = localStorage.getItem("currentPage")
+    switch (current) {
+        case null:
+            break
+        case "login":
+            document.querySelector(".description").style.display = "none"
+            document.querySelector(".loginWrapper").classList.add("visible")
+            break
+        case "register":
+            document.querySelector(".description").style.display = "none"
+            document.querySelector(".registerWrapper").classList.add("visible")
+            break
+    }
+}
+
 document.addEventListener("DOMContentLoaded",(event)=>{
-    const form1 = document.getElementById("registerForm");
-    const output = document.getElementById("output");
-    const emailRegisterInput = document.getElementById("emailRegister")
-    const emailRegisterSuggest = document.getElementById("emailSuggest")
-    //y'a du travail a faire ici : remplacer le contenu après "@" par hotmail,gmail,outlook,bluewin,yahoo
-    //et faut règler le problème de l'assistant firefox qui se fout là où il faut pas
-    let purposal = ["hotmail.com","gmail.com","outlook.com","yahoo.com","rpn.ch","icloud.com","bluewin.ch"]
-    emailRegisterInput.addEventListener("keyup",()=>{
-        if (emailRegisterInput.value.includes("@")) {
-            var indexArobas = emailRegisterInput.value.indexOf("@") 
-            var extension = emailRegisterInput.value.slice(0,indexArobas+1)
-            retourne = extension + purposal[1]
-            emailRegisterSuggest.innerHTML = "vous êtes : " + retourne + " ?"
-        }
-    })
-    
-    emailRegisterSuggest.addEventListener("click",()=>{
-        emailRegisterInput.value = retourne
-    })
-
-    document.getElementById("openForm").addEventListener("click",(e)=>{
+    document.getElementById("openForm").addEventListener("click",openRegister)
+    document.getElementById("gotoRegister").addEventListener("click",openRegister)
+    function openRegister(e){
+        //open register
         e.preventDefault()
+        localStorage.setItem("currentPage","register")
         document.querySelector(".description").style.display = "none"
+        document.querySelector(".loginWrapper").classList.remove("visible")
         document.querySelector(".registerWrapper").classList.add("visible")
-    })
-    document.querySelector(".logIn").addEventListener("click",()=>{
+    }
+    document.querySelector(".logIn").addEventListener("click",openLogin)
+    document.getElementById("gotoLogin").addEventListener("click",openLogin)
+    function openLogin(e) {
+        e.preventDefault()
+        console.log("working")
+        localStorage.setItem("currentPage","login")
         document.querySelector(".description").style.display = "none"
+        document.querySelector(".registerWrapper").classList.remove("visible")
         document.querySelector(".loginWrapper").classList.add("visible")
-    })
+    }
+
+    document.querySelectorAll(".back").forEach(element => {
+        element.addEventListener("click",()=>{
+            localStorage.setItem("currentPage",null)
+            document.querySelector(".loginWrapper").classList.remove("visible")
+            document.querySelector(".registerWrapper").classList.remove("visible")
+            document.querySelector(".description").style.display = "flex"
+        })
+    });
 
 
+    //keep the right page opened (login, register, or landing)
+    
 
-
+    const form1 = document.getElementById("registerForm")
     form1.addEventListener("submit", async (event) => {
         event.preventDefault(); // Empêche la soumission normale du formulaire
     
@@ -113,12 +132,4 @@ document.addEventListener("DOMContentLoaded",(event)=>{
             })
         })
     }
-
-    //dom is loaded so : TIME FOR STYLING 
-    //jquery required !
-    $("#goToLogin, #goToRegister").on("click",()=>{
-        $(".containerMoove").toggleClass("mooved")
-        $(".loginForm , .registerForm").toggleClass("mooved")
-        $(".goToLogin , .goToRegister").toggleClass("mooved")      
-    })
 })

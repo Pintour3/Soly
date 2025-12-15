@@ -1,78 +1,147 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-
-.roboto {
-    font-size: 1em;
-    font-family: "Roboto", sans-serif;
-}
-*{
-    padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=Bitcount+Grid+Single:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+* {
     margin: 0;
+    padding: 0;
+}
+:root {
+    --color1:#00d46a;
+    --color2:rgb(30,216,76);
+    --color3:#1d1d1d;
+    --color4:rgb(14,14,14);
 }
 body {
+    background-color: rgb(17, 17, 17);
+    margin: 0;
+    height: 100dvh;
     width: 100%;
-    height: 100vh;
-    background-color: rgb(80, 80, 80);
+    position:  relative;
+    box-sizing: border-box;
+    overflow:hidden;   
     display: flex;
     justify-content: center;
     align-items: center;
 }
-form {
-    width: 100%;
-    height: 100%;
+.zoneWrapper {
+    background-color: var(--color3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2em;
+    color: white;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
 }
-.contentWrapper {
-    width: 33%;
-    height: 82vh;
-    border: 4px solid rgb(10, 255, 50);
-    border-radius: 10px;
-    color: rgb(10, 255, 50) ;
-    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
-    padding:2em 1em;
-    background-color: rgba(20, 20, 20);
+.circle,.circle2 {
     display: flex;
-    position: relative;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 255, 135, 0.4) 0%, transparent 70%);
+    width: clamp(30em,40vw,40em);
+    height: clamp(30em,40vw,40em);
+}
+.circle {
+    left: clamp(-15em,-20vw,-20em);
+    bottom: clamp(-15em,-20vw,-20em);
+}
+.circle2 {
+    right: clamp(-15em,-20vw,-20em);
+    top: clamp(-15em,-20vw,-20em);
+}
 
+form {
+    flex: 1;
+    font-family: "roboto", sans-serif;
+    width: 30em;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 2em;
 }
-h1 { 
+.logo {
+    width: 4em;
+}
+h1 {
+    width: 100%;
     text-align: center;
 }
-.imageWrapper {
-    display: flex;
-    flex-direction: column-reverse;
-    height: 10em;
-    width: 80%;
-    align-items: center;
-}
-.imageWrapper input {
-    background-color: white;
-    border-radius: 0;
 
+.contentWrapper {
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
 }
-.imageWrapper label {
+.profileWrapper {
+    position: relative;
+    display: flex;
+    gap: 3em;
+}
+.imageWrapper {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1em;
+    gap: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.imageSpan {
+    width: 6em;
+    height: 6em;
+    aspect-ratio: 1/1;
+    background-image: linear-gradient(90deg,var(--color1) 20%, var(--color2) 100%);    
+    border-radius: 50%;
+    border: 2.5px solid rgba(0, 0, 0,   0.4);
+    display: flex;
+    place-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.imageSpan > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.imageSpan > i {
+    font-size: 3em;
+}
+.imageLabel {
+    height: fit-content;
+    width: fit-content;
+    background-color: var(--color1) ;
+    padding: .5em;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.8em;
-    height: 15%;
-    width: 60%;
-    margin-top: 2%;
-    background-color: rgba(20, 20, 20);
-    border: 4px solid rgb(10, 255, 50);
-    border-radius: 10px;
-    color: rgb(10, 255, 50) ;
-    padding: 0.5em;
-    box-shadow: 0 0px 10px rgba(10, 255, 50, 0.5);
-    transition: all 0.2s ease-in-out;
+    border-radius: 50px;
+    box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    bottom: -2.5%;
+    left: 16%;
+    transition: all 0.15s ease-in-out;
     &:hover {
-        box-shadow: none;
-        transform: scale(1.05);
+        cursor: pointer;
+        transform: scale(1.1);
+    }
+}
+.clickSpan {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/*profile card*/
+
+.card {
+    width: 30em;
+    height: 30em;
+    
+}
+.usernameWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+
+@media (max-width:700px) {
+    .zoneWrapper {
+        flex-direction: column;
     }
 }

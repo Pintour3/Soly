@@ -4,12 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vérifiez votre mail</title>
+    <link rel="stylesheet" href="emailVerif.css">
+    <link rel="stylesheet" href="no-interaction.css">
     
+    <link rel="icon" type="image/png" href="assets/favicons/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicons/favicon.svg" />
+    <link rel="shortcut icon" href="assets/favicons/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Soly" />
+    <link rel="manifest" href="assets/favicons/site.webmanifest" />
 </head>
 <body>
-    <div>
-        Hi <span id="email"></span>, <br>
-        we just need to check your account
+    <div class="circle"></div>
+    <div class="circle2"></div>
+    <div class="content">
+        <h1>Hi <span id="email"></span></h1>
+        <p>we just need to check your account</p>
         <button id="sendEmail">Send mail verif</button>
     </div>
     <script src="emailVerif.js"></script>

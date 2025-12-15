@@ -1,0 +1,4 @@
+Pour que ça marche pour les icons apple, du dois le mettre dans :
+"/assets/favicons"
+
+ou alors modifier le src dans "site.webmanifest"

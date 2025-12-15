@@ -1,14 +1,15 @@
 const url = window.location.href
+/*
 if (url.includes(".html")){
     window.location.href = "/"
-} 
+} */
 document.addEventListener("DOMContentLoaded",async ()=>{
     //id fileInput
     var fileInput = document.getElementById("fileInput")   
     //lorsqu'on ajoute une image 
     fileInput.addEventListener("change",(event)=>{
         //Dans la div parentee
-        var div = document.getElementById("profilePicture")
+        const div = document.querySelector(".imageSpan")
         //s'il n'y a pas d'image
         if (div.querySelector("img")) {
             var pic = document.getElementById("picture")
@@ -25,16 +26,15 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             reader.onload = (e)=>{
                 //cible l'image
                 img.src = e.target.result;
-                //propriété de la taille de l'image
-                img.style.width = "15em"
-                img.style.aspectRatio = "1 / 1"
                 img.id = "picture"
+                div.querySelector("i").style.display = "none"
                 //apporter l'image
                 div.appendChild(img)
                 var selectButton = div.querySelector("label")
                 selectButton.style.width = "25%"
                 selectButton.style.height = "7.5%"
                 selectButton.style.fontSize ="1em"
+                
                 selectButton.textContent = "Changer ?"
                 
             };

@@ -4,30 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="editProfile.css">
+    <link rel="stylesheet" href="no-interaction.css">
     <script src="editProfile.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_photo_alternate,person" />
+
+    <link rel="icon" type="image/png" href="assets/favicons/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicons/favicon.svg" />
+    <link rel="shortcut icon" href="assets/favicons/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Soly" />
+    <link rel="manifest" href="assets/favicons/site.webmanifest" />
+
+
+
     <title>SolY | Edit profile</title>
 </head>
-<body class="roboto">
-    
-    <form autocomplete="off" action="/editProfile" method="POST" id="form" enctype="multipart/form-data">
-        <input autocomplete="false" name="hidden" type="text" style="display:none;">
-        <main class="contentWrapper">
-            <div class="titleWrapper">
-                <h1>Crée / modifie ton profil utilisateur</h1>
-            </div>
-            <div class="usernameWrapper">
-                <label for="username">Entre ton nom d'utilisateur</label>
-                <input type="text" name="username" id="username" placeholder="username" required>
-            </div>
-            <div id="profilePicture" class="imageWrapper">
-                <input hidden name="profilePicture" id="fileInput" type="file" src="" alt="inserez votre photo de profil" accept=".png,.jpg,.jpeg,.gif,.webp">
-                <label for="fileInput">Selectionnez votre photo de profil</label>
-            </div>
-            <div class="validateWrapper">
-                <button type="submit" class="submitButton">Valider</button>
-                <label for="comment">vous pourrez toujours modifier votre profil plus tard</label>
-            </div>
-        </main>
-    </form>
+<body>
+    <div class="circle"></div>
+    <div class="circle2"></div>
+    <div class="zoneWrapper">
+        <form autocomplete="off" action="/editProfile" method="POST" id="form" enctype="multipart/form-data">
+            <img class="logo" src="assets/png/soly_light_ISO_border.png" alt="">
+            <input autocomplete="false" name="hidden" type="text" style="display:none;">
+            <main class="contentWrapper">
+                <div class="titleWrapper">
+                    <h1>Personnalise ton profil</h1>
+                </div>
+                <div id="profilePicture" class="imageWrapper">
+                    <span>photo de profil</span>
+                    <div class="profileWrapper">
+                        <input hidden name="profilePicture" id="fileInput" type="file" src="" alt="inserez votre photo de profil" accept=".png,.jpg,.jpeg,.gif,.webp">
+                        <span class="imageSpan"><i class="material-symbols-outlined">person</i></span>
+                        <label class="imageLabel" for="fileInput"><i class="material-symbols-outlined">add_photo_alternate</i></label>
+                        <span class="clickSpan">
+                            Cliquez sur l'icône pour changer votre photo
+                        </span>
+                    </div>
+                </div>
+                <div class="usernameWrapper">
+                    <label for="username">Choisis ton nom d'utilisateur</label>
+                    <input type="text" name="username" id="username" placeholder="username" required>
+                </div>
+                
+                <div class="validateWrapper">
+                    <button type="submit" class="submitButton">Valider</button>
+                    <span for="comment">vous pourrez toujours modifier votre profil plus tard</span>
+                </div>
+            </main>
+        </form>
+        <div class="card">
+            nothing here
+        </div>
+    </div>
+
 </body>
 </html>
