@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     verified: {type:Boolean,default:false},
     verificationToken: String,
     profilePicture:{type:String,default:""},
-    solyTag:String,
+    solyTag:{type:String,default:null},
     friendRequest:{type:Array,default:[]},
     friendList:{type:Array,default:[]}
 });

@@ -38,14 +38,14 @@ router.get("/emailVerif",isUnverifAuth,(req,res)=>{
 
 //if the user didn't have a username, redirect to edit profile
 
-router.get(['/accueil',"/accueil.html"], isAuth,async(req, res) => {
+router.get(['/accueil','/accueil.html','/accueil/'], isAuth,async(req, res) => {
     try {
         const user = await User.findById(req.session.user.userId).select("username")
-        if (user.username) {
+        if (user && user.username) {
             req.session.user.username = user.username
             res.sendFile(path.join(__dirname,"..", 'public', 'accueil.html'));
         } else {
-            return res.redirect("editProfile")
+            return res.redirect("/editProfile")
         }
     } catch (error) {
         console.error(error)
@@ -74,20 +74,29 @@ router.post("/emailVerif",isUnverifAuth, async (req,res)=>{
             await user.save();
         }
         const transporter = nodemailer.createTransport({
-            host:"mail.infomaniak.com",
-            port:587,
+            host: "mail.infomaniak.com",
+            port: 587,
+            secure: false, 
             auth: {
-                user:process.env.MAIL_USERNAME,
-                pass:process.env.MAIL_PASSWORD
-            }
-        })
+                user: process.env.MAIL_USERNAME,
+                pass: process.env.MAIL_PASSWORD,
+            },
+            tls: {
+                rejectUnauthorized: false
+            },
+            debug: true, // Active les logs détaillés
+            logger: true // Active le logger
+        });
+        console.log('Username:', process.env.MAIL_USERNAME);
+        console.log('Password:', process.env.MAIL_PASSWORD);
+        console.log('Password length:', process.env.MAIL_PASSWORD?.length);
         const verifURL = `https://soly.arthur-maye.ch/checkToken?token=${user.verificationToken}` 
         const mailOptions = {
             from:process.env.MAIL_USERNAME,
             to:user.email,
             subject:"Verification de votre adresse e-mail",
             html:`<p>merci de vous inscrire ! cliquez sur le lien ci dessous pour confirmer que cette adresse vous appartient :</p>
-            <a href=${verifURL}>Verifiez maintenant !</a>`
+            <a href="${verifURL}">Verifiez maintenant !</a>`
         }
         await transporter.sendMail(mailOptions)
         res.json({message:"mail envoyé"})
@@ -123,6 +132,10 @@ router.get("/checkToken",async (req,res)=> {
 router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>{
     try {
         const userId = req.session.user.userId
+        //if username is not valid
+        if (!req.body.username || req.body.username.length < 3 || req.body.username.length > 15) {
+            return res.status(403).json({message:"nom d'utilisateur invalide"})
+        }
         const user = await User.findById(userId)
         let solyTag;
         if (!user.solyTag) { // si l'user n'a pas de solytag

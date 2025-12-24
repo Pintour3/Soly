@@ -1,8 +1,3 @@
-const url = window.location.href
-if (url.includes(".html")){
-    window.location.href = "/"
-} 
-
 window.onload = () =>{
     const current = localStorage.getItem("currentPage")
     switch (current) {
@@ -52,8 +47,7 @@ document.addEventListener("DOMContentLoaded",(event)=>{
 
 
     //keep the right page opened (login, register, or landing)
-    
-
+    const output = document.getElementById("output")
     const form1 = document.getElementById("registerForm")
     form1.addEventListener("submit", async (event) => {
         event.preventDefault(); // Empêche la soumission normale du formulaire

@@ -9,14 +9,6 @@ app.use(urlencoded({extended: true}))
 app.use(express.json())
 require('dotenv').config()
 
-//anti "/" at the end of url
-app.use((req, res, next) => {
-  if (req.path.length > 1 && req.path.endsWith("/")) {
-    return res.redirect(301, req.path.slice(0, -1));
-  }
-  next();
-});
-
 
 //files imports
 const route = require("./root-folder/route")
@@ -30,7 +22,6 @@ app.use(express.static(path.join(__dirname, 'public'), {index: false,redirect:fa
 
 
 //cookie and sessions
-
 const sessionMiddleware = session({
     secret:"temporary",
     resave:false,
@@ -43,6 +34,19 @@ const sessionMiddleware = session({
     })
 app.use(sessionMiddleware);
 
+//slash middleware
+app.use((req, res, next) => {
+  if (
+    req.path.length > 1 &&
+    req.path.endsWith('/') &&
+    !req.path.match(/\.[^\/]+\/$/) // ignore si c’est un fichier avec extension suivi d’un slash
+  ) {
+    const newPath = req.path.slice(0, -1);
+    return res.redirect(301, newPath);
+  }
+  next();
+});
+
 //WARN : initialise session and cookie before route, 
 //if not, isAuth middleware will return false even if session is enabled after
 
@@ -50,8 +54,7 @@ app.use(sessionMiddleware);
 app.use(route)
 app.use(login)
 app.use(api)
-//redirect to a register portal to check e-mail
-//to do pls
+
 
 //socket.io for message handling
 const socketIo = require("socket.io");

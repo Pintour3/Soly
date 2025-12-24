@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="editProfile.css">
     <link rel="stylesheet" href="no-interaction.css">
     <script src="editProfile.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_photo_alternate,person" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_photo_alternate,mail,person,tag" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <link rel="icon" type="image/png" href="assets/favicons/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="assets/favicons/favicon.svg" />
@@ -22,17 +23,17 @@
 <body>
     <div class="circle"></div>
     <div class="circle2"></div>
-    <div class="zoneWrapper">
-        <form autocomplete="off" action="/editProfile" method="POST" id="form" enctype="multipart/form-data">
-            <img class="logo" src="assets/png/soly_light_ISO_border.png" alt="">
-            <input autocomplete="false" name="hidden" type="text" style="display:none;">
-            <main class="contentWrapper">
-                <div class="titleWrapper">
-                    <h1>Personnalise ton profil</h1>
-                </div>
-                <div id="profilePicture" class="imageWrapper">
-                    <span>photo de profil</span>
-                    <div class="profileWrapper">
+    <div class="pageScroll">
+        <div class="zoneWrapper">
+            <form autocomplete="off" action="/editProfile" method="POST" id="form" enctype="multipart/form-data">
+                <img class="logo" src="assets/png/soly_light_ISO_border.png" alt="">
+                <input autocomplete="false" name="hidden" type="text" style="display:none;">
+                <main class="contentWrapper">
+                    <div class="titleWrapper">
+                        <h1>Personnalise ton profil</h1>
+                    </div>
+                    <span class="profileLabel">photo de profil</span>
+                    <div id="profilePicture" class="imageWrapper">
                         <input hidden name="profilePicture" id="fileInput" type="file" src="" alt="inserez votre photo de profil" accept=".png,.jpg,.jpeg,.gif,.webp">
                         <span class="imageSpan"><i class="material-symbols-outlined">person</i></span>
                         <label class="imageLabel" for="fileInput"><i class="material-symbols-outlined">add_photo_alternate</i></label>
@@ -40,22 +41,52 @@
                             Cliquez sur l'icône pour changer votre photo
                         </span>
                     </div>
+                    <div class="usernameWrapper">
+                        <label for="username">Choisis ton nom d'utilisateur</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="username"
+                            autocomplete="username"
+                            autocapitalize="off"
+                            autocorrect="off"
+                            spellcheck="false"
+                            inputmode="text"
+                            required
+                            >
+                    </div>
+                    
+                    <div class="validateWrapper">
+                        <button type="submit" class="submitButton">Valider</button>
+                        <span for="comment">vous pourrez toujours modifier votre profil plus tard</span>
+                    </div>
+                </main>
+            </form>
+            <div class="card">
+                <div class="profileCard">
+                    <header class="headerProfile">
+                        <h2 class="preview">prévisualisation</h2>
+                    </header>
+                    <main class="mainProfile"> 
+                        <span class="imageSpan"><i class="material-symbols-outlined">person</i></span>
+                        <h2 class="username"></h2>
+                        <div class="splitter"></div>
+                        <div class="email"></div>
+                        <div class="solyTag"></div>
+                    </main>
                 </div>
-                <div class="usernameWrapper">
-                    <label for="username">Choisis ton nom d'utilisateur</label>
-                    <input type="text" name="username" id="username" placeholder="username" required>
-                </div>
-                
-                <div class="validateWrapper">
-                    <button type="submit" class="submitButton">Valider</button>
-                    <span for="comment">vous pourrez toujours modifier votre profil plus tard</span>
-                </div>
-            </main>
-        </form>
-        <div class="card">
-            nothing here
+            </div>
         </div>
     </div>
+    <div class="popUpRegister">
+        <span id="output" class="roboto output"></span>
+        <div class="progressBarEmpty">
+        </div>
+        <div class="progressBarFilling">
+        </div>
+    </div>
+    
 
 </body>
 </html>

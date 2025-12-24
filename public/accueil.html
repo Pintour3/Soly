@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="accueil.css">
     <script type="module" src="accueil.js"></script>
-    <link rel="shortcut icon" href="fav.ico" type="image/x-icon">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script src="https://kit.fontawesome.com/f33d721ffe.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="particles.js"></script>
+
+    <link rel="icon" type="image/png" href="assets/favicons/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicons/favicon.svg" />
+    <link rel="shortcut icon" href="assets/favicons/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Soly" />
+    <link rel="manifest" href="assets/favicons/site.webmanifest" />
     <title>Soly | Accueil</title>
 </head>
 <body>
@@ -43,7 +49,7 @@
         <div class="profilePicture">
             <img id="profilePicture" src="" alt="">
         </div>
-        <i class="fa fa-gear"></i>
+        <i class="fa fa-gear" id="editProfile"></i>
         <i class="fa fa-sign-out" id="logout"></i>
         <i class="fa fa-info-circle"></i>
     </aside>

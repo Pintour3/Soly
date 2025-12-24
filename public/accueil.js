@@ -1,9 +1,5 @@
 import {io} from "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.esm.min.js"
-const url = window.location.href
-/*
-if (url.includes(".html")){
-    window.location.href = "/"
-} */
+
 //socket.io
 const socket = io("https://soly.arthur-maye.ch",{
     secure:true
@@ -59,7 +55,11 @@ document.addEventListener("DOMContentLoaded",async()=>{
         window.location.href = "/"
         
     })
-
+    //open settings client
+    const editProfileButton = document.getElementById("editProfile")
+    editProfileButton.addEventListener("click",()=>{
+        window.location.href = "/editProfile"
+    })
     //submit friend formular
     var solyTagInput = document.getElementById("solyTagInput")
     var solyTagButton = document.getElementById("solyTagButton")
