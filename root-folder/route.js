@@ -29,16 +29,16 @@ router.get(["/","/index.html"],homeRedirect);
 
 //editProfile
 
-router.get("/editProfile",isAuth,(req,res)=>{
+router.get(["/editProfile","/editProfile.html"],isAuth,(req,res)=>{
     res.sendFile(path.join(__dirname,"..","public","editProfile.html"))
 })
-router.get("/emailVerif",isUnverifAuth,(req,res)=>{
+router.get(["/emailVerif","/emailVerif.html"],isUnverifAuth,(req,res)=>{
     res.sendFile(path.join(__dirname,"..","public","emailVerif.html"))
 })
 
 //if the user didn't have a username, redirect to edit profile
 
-router.get(['/accueil','/accueil.html','/accueil/'], isAuth,async(req, res) => {
+router.get(['/accueil','/accueil.html'], isAuth,async(req, res) => {
     try {
         const user = await User.findById(req.session.user.userId).select("username")
         if (user && user.username) {
@@ -118,10 +118,17 @@ router.get("/checkToken",async (req,res)=> {
         await user.save()
         if (req.session && req.session.user && req.session.user.userId.toString() === user._id.toString()) {
             req.session.user.verified = true
+            return req.session.save((err)=>{
+                if (err) {
+                    console.error('Erreur save session:', err)
+                    return res.status(500).send('erreur du serveur ... ')
+                }
+                return res.redirect("/editProfile")
+            })
         } else {
             await updateSession(user._id,{"session.user.verified":true})
+            return res.redirect("/editProfile")
         }
-        res.redirect("/editProfile")
     }catch(err) {
         console.error(err)
         res.status(500).send("erreur du serveur ... ")
@@ -193,7 +200,14 @@ router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res
             username:updateUser.username,
             verified:updateUser.verified
         }
-        return res.status(201).send()
+        // s'assurer que la session est persistée
+        return req.session.save((err)=>{
+            if (err) {
+                console.error('Erreur save session:', err)
+                return res.status(500).send()
+            }
+            return res.status(201).send()
+        })
     } catch (error) {
         console.error(error)
     }
