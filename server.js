@@ -24,7 +24,7 @@ const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || "temporary",
     resave: false,
     cookie: {
-        maxAge: 60*1000*60,
+        maxAge: 60*1000*60*24*7, //1 semaine
         sameSite: "lax",
         secure: process.env.NODE_ENV === 'production'
     },
@@ -81,8 +81,15 @@ socketHandler(io);
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).send('Page non trouvée');
+    res.status(404).send('Erreur 404, page non trouvée');
 });
+
+// Gestion des erreurs non catchées
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+    // Ne pas crasher en production
+});
+
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {

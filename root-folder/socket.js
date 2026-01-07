@@ -1,6 +1,6 @@
 const User = require("./userModel")
 const Conversation = require("./messageModel");
-
+const {sendPushNotification} = require("./sendNotif")
 //mapping des utilisateur connectés
 const connectedUsers = {}
 
@@ -18,9 +18,9 @@ function socketHandler(io) {
             const solyTag = targetSolyTag //{solyTag:"soly#1234"}
             const user = await User.findById(userId)
             .populate("friendList") //populate convert friendlist elt (object id) in real profile
-            .select("username solyTag _id friendRequest friendList")
+            .select("username solyTag _id friendRequest friendList profilePicture")
             const targetUser = await User.findOne(solyTag)
-            .select("username solyTag _id friendRequest friendList")
+            .select("username solyTag _id friendRequest friendList profilePicture")
             let userFriendRequest = user.friendRequest
             let userFriendList = user.friendList
             //if user is found
@@ -66,19 +66,19 @@ function socketHandler(io) {
             const user = await User.findById(userId)
             const targetUser = await User.findOne({solyTag:targetSolyTag})
             if (request.accepted) { // if friend accept the request
-                const convId = [user._id.toString(),targetUser._id.toString()].sort().join("_")
                 await User.findByIdAndUpdate(userId, //for user
                     {
-                        $addToSet:{friendList:{targetUser:targetUser._id,solyTag:targetSolyTag,convId:convId}},//directly pushes the data to the array
+                        $addToSet:{friendList:{targetUser:targetUser._id,solyTag:targetSolyTag}},//directly pushes the data to the array
                         $pull:{friendRequest:{solyTag:targetSolyTag}} //directly pull the data from the array
                     }, 
                     {new:true})
                 await User.findOneAndUpdate({solyTag:targetSolyTag}, //for target User
                     {
-                        $addToSet:{friendList:{targetUser:user._id,solyTag:user.solyTag,convId:convId}},
+                        $addToSet:{friendList:{targetUser:user._id,solyTag:user.solyTag}},
                         $pull:{friendRequest:{solyTag:user.solyTag}}
                     }
                 )
+                const convId = [user._id.toString(),targetUser._id.toString()].sort().join("_")
                 const conv = new Conversation({convId:convId})
                 conv.save()
                 socket.emit("friendRequestResponse",`vous êtes désormais ami avec ${targetUser.username}`,true,targetUser)
@@ -108,24 +108,34 @@ function socketHandler(io) {
         })
         socket.on("message",async (message)=>{
             socket.emit("messageResponse",message)
-            const receiver = await User.findOne({solyTag:message.to.solyTag}).select("_id")
-            const conversationId = [userId.toString(),receiver._id.toString()].sort().join("_")
-            const conversation = await Conversation.findOneAndUpdate({convId:conversationId},
-                {
-                    $push:{messages:message}
-                }
+            const friendSolyTag = message.receiver
+            const receiver = await User.findOne({solyTag:friendSolyTag}).select("_id")
+            const conversationId = [userId.toString(),receiver._id.toString()].sort().join("_")            
+            const conversation = await Conversation.updateOne(
+                {convId:conversationId},{$push:{messages:message}}
             )
-            if (connectedUsers[receiver._id]) {
+            if (connectedUsers[receiver._id]) { //if online
                 const targetUserId = connectedUsers[receiver._id]
                 io.to(targetUserId).emit("messageResponse",message)
+            } else { //if offline
+                const sender = await User.findOne({solyTag:message.sender}).select("username")
+                await sendPushNotification(receiver._id.toString(),{
+                    title:`Message de ${sender.username}`,
+                    body:message.message,
+                    icon:"/public/assets/png/soly_light_ISO_border.png",
+                    data:{conversationId}
+                })
             }
-            
         })
         //conversation load
         socket.on("askConversation", async (friendSolyTag)=>{
             const friendId = await User.findOne({solyTag:friendSolyTag}).select("_id").lean()
             const convId = [userId.toString(),friendId._id.toString()].sort().join("_")
-            const conv = await Conversation.findOne({convId:convId}).select("messages")
+            let conv = await Conversation.findOne({convId:convId}).select("messages")
+            if (!conv) {
+                conv = new Conversation({convId:convId})
+                conv.save()
+            }
             socket.emit("askConversationResponse",{friendSolyTag,conv})
         })
         

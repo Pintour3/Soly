@@ -8,6 +8,8 @@ const fs = require("fs")
 const isUnverifAuth = require("./unverifAuth")
 const {updateSession} = require("./updateSession")
 
+
+//get session user and send him if he's unverif or doesn't have a session
 function homeRedirect(req,res){
     const user = req.session.user
     if (!user){
@@ -169,7 +171,7 @@ router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res
             //if there is one before this 
             if (previousPicture) {
                 if (previousPicture !== "/upload/default.webp") { //not delete default picture
-                    const oldPath = path.join(__dirname,previousPicture)
+                    const oldPath = path.join(__dirname,"..",previousPicture)
                     fs.unlink(oldPath,(err)=>{
                         if (err) {
                             console.error("erreur lors de la suppression ", err)

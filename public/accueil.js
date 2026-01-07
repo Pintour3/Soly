@@ -1,67 +1,5 @@
 import {io} from "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.esm.min.js"
 
-/*
-    
-    let currentFriendChat = null;
-    
-    $(document).on("click",".friendWrapper",function(){
-        $(".friendMenu,.friendMenuWrapper").removeClass("visible")
-        const data = $(this).data("friend") //associe le container à son objet 
-        if (data === currentFriendChat) {
-            currentFriendChat = null
-            $(".chatContainer").removeClass("visible")
-            
-        } else {
-            currentFriendChat = data
-            $(".chatContainer").addClass("visible")
-            $(".headerFriendName > h1").html(data.username)
-            const conv = conversations[data.solyTag].messages //on prends la conversation correspondant a l'utilisateur
-            //on clear le container de chat
-            const container = document.querySelector(".chatMain")
-            container.innerHTML = ""
-            conv.forEach(message=>{
-                if (message.send.solyTag === user.solyTag) { //if message was sent by user
-                    popMessageSender(user.username,message.message)
-                } else {
-                    popMessageReceiver(message.send.username,message.message)
-                }
-            })
-            
-            
-            container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
-        }   
-    })
-
-    //message
-    const input = document.querySelector(".footerInput > textarea")
-    const submitButton = document.querySelector(".footerButton > button")
-    input.addEventListener("keydown",(e)=>{
-        if (e.key === "Enter") {
-            e.preventDefault()
-            messageSubmit() //quand on envoie un message
-        }
-    })
-    submitButton.addEventListener("click",messageSubmit)
-    function messageSubmit(){ 
-        const message = input.value.trim()
-        if (message === "") return;
-        const mess = new Message(message,user,currentFriendChat,new Date())
-        socket.emit("message",mess)
-        input.value = ""
-        input.focus()
-    }
-    socket.on("messageResponse",message=>{
-        if (message.send.solyTag === user.solyTag) { //si celui qui recoit est l'envoyeur
-            popMessageSender(message.send.username,message.message) //alors l'envoyeur est le receveur
-        } else { //si celui qui reçoit n'est pas l'envoyeur
-            popMessageReceiver(message.send.username,message.message) //alors 
-        } 
-        const container = document.querySelector(".chatMain")
-        container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
-    })
-})
-*/
-
 document.addEventListener("DOMContentLoaded",async ()=>{
 
     //UI #######################################################
@@ -70,12 +8,14 @@ document.addEventListener("DOMContentLoaded",async ()=>{
     const addFriendIcon = document.querySelector(".addFriendIcon")
     const friendContainer = document.querySelector(".messageContainer")
     const addFriendContainer = document.querySelector(".addFriendContainer")
+    const convContainer = document.querySelector(".conversationContainer")
     let currentMenu = messageIcon;
     function select() {
         //put background on selected menu
         document.querySelectorAll(".iconsWrapper > i").forEach(item=>{
             if (item === this) {
                 currentMenu = this
+                console.log(currentMenu)
                 item.style.backgroundColor = "rgba(255,255,255,0.2)"
             } else {
                 item.style.backgroundColor = "transparent"
@@ -83,11 +23,14 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         })
         //display message or addfriend container
         if (currentMenu === messageIcon) {
-            friendContainer.style.display = "flex"
-            addFriendContainer.style.display = "none"
+            friendContainer.classList.add("visible")
+            addFriendContainer.classList.remove("visible")
+            convContainer.classList.remove("visible")
+
         } else {
-            friendContainer.style.display = "none"
-            addFriendContainer.style.display = "flex"
+            friendContainer.classList.remove("visible")
+            addFriendContainer.classList.add("visible")
+            convContainer.classList.remove("visible")
         }
     }
     messageIcon.addEventListener("click",select)
@@ -104,6 +47,44 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         document.querySelector(".addFriendPopup").classList.toggle("visible")
     }
 
+    //close conversation
+    document.querySelector(".back").addEventListener("click",()=>{
+        convDiv.classList.remove("visible")
+        homeDiv.classList.add("visible")
+        messDiv.classList.add("visible")
+        
+        hideMessDiv()
+    })
+
+    //hide friend container when screen is small and conversation is oppened
+    const convDiv = document.querySelector(".conversationContainer")
+    const messDiv = document.querySelector(".messageContainer")
+    const friendRequestDiv = document.querySelector(".addFriendContainer")
+    const homeDiv = document.querySelector(".homeContainer")
+    function hideMessDiv() { //
+        if (window.innerWidth <= 900 && convDiv.classList.contains("visible")) {
+            messDiv.classList.remove("visible")
+            document.querySelector(".aside").style.display ="none"
+            friendRequestDiv.classList.remove("visible")
+        } else if (window.innerWidth <= 900 && !convDiv.classList.contains("visible")){
+            homeDiv.classList.remove("visible")
+            document.querySelector(".aside").style.display ="flex"
+
+        } else if (window.innerWidth > 900 && convDiv.classList.contains("visible")) {
+            homeDiv.classList.remove("visible")
+            messDiv.classList.add("visible")
+            document.querySelector(".aside").style.display ="flex"
+
+        } else {
+            homeDiv.classList.add("visible")
+            document.querySelector(".aside").style.display ="flex"
+            if (!friendRequestDiv.classList.contains("visible")) {
+                messDiv.classList.add("visible")
+            }
+        }
+    }
+    hideMessDiv()
+    window.addEventListener("resize",hideMessDiv)
     //LOGIC ############################################################
     //functions
     async function getCredentials(){
@@ -115,7 +96,6 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             if (response.ok) {
                 //return all the data needed :
                 const userdata = await response.json()
-                console.log(userdata)
                 return userdata
 
             } else {
@@ -226,6 +206,56 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             document.querySelector(".friendContainer").appendChild(container)
         }
     }
+    class Message {
+        constructor(message,sender,receiver,date) {
+            this.message = message
+            this.sender = sender
+            this.receiver = receiver
+            this.date = date
+        }
+    }
+    function popMessageReceiver(username, message) {
+        const mess = document.createElement("div");
+        mess.className = "messageUserContainer";
+
+        const messageUser = document.createElement("div");
+        messageUser.className = "messageUser";
+
+        const h4 = document.createElement("h4");
+        h4.textContent = username; // SAFE
+
+        const p = document.createElement("p");
+        p.textContent = message; // SAFE
+
+        messageUser.appendChild(h4);
+        messageUser.appendChild(p);
+        mess.appendChild(messageUser);
+
+        const convMain = document.querySelector(".convMain");
+        convMain.prepend(mess);
+    }
+    function popMessageSender(username,message){
+        const mess = document.createElement("div");
+        mess.className = "messageTargetUserContainer";
+
+        const messageUser = document.createElement("div");
+        messageUser.className = "messageUser";
+
+        const h4 = document.createElement("h4");
+        h4.textContent = username; // SAFE
+
+        const p = document.createElement("p");
+        p.textContent = message; // SAFE
+
+        messageUser.appendChild(h4);
+        messageUser.appendChild(p);
+        mess.appendChild(messageUser);
+
+        const convMain = document.querySelector(".convMain");
+        convMain.prepend(mess);
+    }
+
+
     //process
 
     //connect
@@ -243,20 +273,75 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             $(".progressBarFilling, .popUpRegister").removeClass("visible")
             })
         })
+    }   
+    //notifications
+    let VAPID_PUBLIC_KEY;
+    async function notifInit() {
+        const response = await fetch("/api/vapidConfig")
+        const config = await response.json()
+        VAPID_PUBLIC_KEY = config.vapidPublicKey
+        await requestNotificationPermission()
     }
-    
+
+    const notifButton = document.querySelector(".infoIcon").onclick = async () => {
+            await notifInit()
+        }
+
+    async function requestNotificationPermission(){
+        const isStandalone = window.matchMedia('(display-mode:standalone)').matches
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent)
+        
+        if (isIOS && !isStandalone) {
+            console.log("veuillez installer l'app sur l'écran d'accueil de votre appareil")
+            return false
+        }
+        if ('serviceWorker' in navigator && "PushManager" in window) {
+            try {
+                const registration = await navigator.serviceWorker.register("/serviceWorker.js")
+                console.log("service worker enregistré")
+                const permission = await Notification.requestPermission()
+
+                if (permission === "granted") {
+                    const subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly:true,
+                        applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+                    })
+                    await fetch("/api/subscribe",{
+                        method:"POST",
+                        headers: {"Content-Type":"application/json"},
+                        body:JSON.stringify(subscription)
+                    })
+                    return true
+                }
+            } catch (error) {
+                console.error("erreur lors de la subscription ", error)
+            }
+        }
+        return false
+    }
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4)
+        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+        const rawData = window.atob(base64)
+        const outputArray = new Uint8Array(rawData.length)
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i)
+        }
+        return outputArray
+    }
+
+
     //disconnect client 
     const logoutButton = document.getElementById("logout")
     logoutButton.addEventListener("click",async ()=>{
         console.log("disconnected")
         await disconnect()
         window.location.href = "/"
-        
     })
     //open settings client
     const editProfileButton = document.getElementById("editProfile")
     editProfileButton.addEventListener("click",()=>{
-        window.location.href = "https://soly.arthur-maye.ch/editProfile"
+        window.location.href = "/editProfile"
     })
 
     //add friends
@@ -297,13 +382,18 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             socket.emit("askConversation",friend.solyTag) //fetch conv to the server
         }
     })
+    //promises
+    const conversationsHandlers = {}
     //store conversations
     socket.on("askConversationResponse",({friendSolyTag,conv})=>{
         conversations[friendSolyTag] = conv //add conv to the storage
+        //if there is an existing promise
+        if(conversationsHandlers[friendSolyTag]) {
+            conversationsHandlers[friendSolyTag](conv) //resolve(conv)
+            delete conversationsHandlers[friendSolyTag]
+        }   
     })
     
-
-
     //accept or deny friendRequest
     document.querySelector(".friendRequestContainer").addEventListener("click",(e)=>{
         const button = e.target.closest("button")
@@ -328,7 +418,8 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         displayRedDotNotification(requestList.length)
     })
     //handle friends
-    document.querySelector(".friendContainer").addEventListener("click",(e)=>{
+    let currentConv = null;
+    document.querySelector(".friendContainer").addEventListener("click",async (e)=>{
         const friendDiv = e.target.closest(".friendWrapper")
         if (!friendDiv) return
         const solyTag = friendDiv.dataset.solyTag
@@ -338,8 +429,33 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         if (friend) {
             //open conversation
             let conv = conversations[solyTag]
-            console.log(conv)
-            
+            if (!conv) { //make a promise, wait until the server send the new conv
+                conv = await new Promise((resolve)=>{
+                    conversationsHandlers[solyTag] = resolve
+                    socket.emit("askConversation",solyTag)
+                })
+            }
+            currentConv = friendList.find(elt=> elt.solyTag === solyTag) //friend object
+            let convPage = document.querySelector(".conversationContainer");
+            let homePage = document.querySelector(".homeContainer");
+            convPage.classList.add("visible")
+            homePage.classList.remove("visible")
+            hideMessDiv()
+            document.querySelector(".convUsername").innerHTML = friend.username
+            document.querySelector(".convSolyTag").innerHTML = friend.solyTag
+            //pop messages
+            document.querySelector(".convMain").innerHTML = ""
+
+            if (conv.messages) {
+                const messageList = conv.messages
+                messageList.forEach(message =>{  
+                    if (message.sender === user.solyTag) {
+                        popMessageSender(user.username,message.message)
+                    } else {
+                        popMessageReceiver(friend.username,message.message)
+                    }
+                })   
+            }
         } else {
             return
         }
@@ -347,6 +463,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 
 
     //call user data
+    
     const user = await getCredentials();
     //display solytag and username 
     const username = user.username
@@ -366,6 +483,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         friendRequest.forEach(request=>{
             if (request.type === "received") { //if this request is asked from another user
                 RedDotNotification = true //we put a red dot for visual
+                console.log(request)
                 var request = new FriendRequest(request.username,request.solyTag,request.profilePicture) 
                 request.displayRequest()
                 requestList.push(request)
@@ -384,5 +502,43 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             socket.emit("askConversation",friend.solyTag) //fetch conv to the server
         }
     }
+    
+    //messages 
+    const input = document.querySelector(".convFooterInput")
+    const submitButton = document.querySelector(".convFooterButton")
+    input.addEventListener("keydown",(e)=>{
+        if (e.key === "Enter") {
+            e.preventDefault()
+            messageSubmit() //quand on envoie un message
+        }
+    })
+    submitButton.addEventListener("click",messageSubmit)
+    function messageSubmit(){ 
+        const message = input.value.trim() //clean input
+        if (message === "") return;
+        //mess require user object (for user and target)
+        const mess = new Message(message,user.solyTag,currentConv.solyTag,new Date()) //create message
+        socket.emit("message",mess) //send message
+        input.value = "" //clear input
+        input.focus() //focus on input
+    }
+    socket.on("messageResponse",message=>{
+        //add the new message to the conv list on client side
+        let friend;
+        if (message.sender === user.solyTag) { //si je suis l'envoyeur
+            friend = friendList.find(elt => elt.solyTag === message.receiver) //mon ami est le receveur
 
+            popMessageSender(user.username,message.message)
+        } else { //si je recois le message
+            friend = friendList.find(elt => elt.solyTag === message.sender) //mon ami est l'envoyeur
+
+            if (currentConv.solyTag === message.sender) { //this prevent the message to pop elsewhere than his specific container
+                popMessageReceiver(friend.username,message.message)
+            }
+        }
+        conversations[friend.solyTag].messages.push(message)
+        const container = document.querySelector(".convMain")
+        container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
+    })
+     
 })

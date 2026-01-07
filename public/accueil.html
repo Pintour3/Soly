@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/accueil.css">
-    <script type="module" src="/accueil.js"></script>
+    <link rel="stylesheet" href="accueil.css">
+    <link rel="stylesheet" href="no-interaction.css">
+    <script type="module" src="accueil.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,chat_bubble,check,close,info,logout,person_add,settings" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,chat_bubble,check,chevron_left,close,info,logout,mic,person_add,send,settings" />
 
     <link rel="icon" type="image/png" href="/assets/favicons/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.svg" />
@@ -35,7 +36,7 @@
         </div>
     </aside>
     <main class="main">
-        <section class="messageContainer">
+        <section class="messageContainer visible">
             <header class="messageTitle">
                 <h1>Messages</h1>
                 <div class="newConv">
@@ -46,7 +47,7 @@
                 
             </div>
         </section>
-        <section class="addFriendContainer" style="display: none;">
+        <section class="addFriendContainer">
             <header class="addFriendTitle">
                 <h1>Demandes d'ami</h1>
             </header>
@@ -65,10 +66,30 @@
                 <button class="friendRequestButton">Envoyer</button>
             </main>
         </div>
-        <section class="homeContainer">
+        <section class="homeContainer visible">
             <h1>Salut, </h1>
             <p class="welcomeText">Bienvenue sur Soly</p>
             <h4>ton Soly tag : </h4>
+        </section>
+        <section class="conversationContainer">
+            <header class="convHeader">
+                <div class="backWrapper">
+                    <div class="back"><i class="material-symbols-outlined">chevron_left</i></div>
+                </div>
+                <div class="convInfoWrapper">
+                    <h1 class="convUsername"></h1>
+                    <h4 class="convSolyTag"></h4>
+                </div>
+            </header>
+            <main class="convMain"></main>
+            <footer class="convFooter">
+                <div class="convFooterIconsWrapper">
+                    <i class="material-symbols-outlined">mic</i>
+                    <i class="material-symbols-outlined">add</i>
+                </div>
+                <input type="text" class="convFooterInput">
+                <button class="convFooterButton"><i class="material-symbols-outlined">send</i></button>
+            </footer>
         </section>
     </main>
     <div class="popUpRegister">

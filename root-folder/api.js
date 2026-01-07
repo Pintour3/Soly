@@ -1,8 +1,10 @@
 const express = require("express")
 const router = express.Router()
 const User = require("./userModel")
+const vapidSubscription = require("./vapidSubscription")
 const isAuth = require("./auth")
 const isUnverifAuth = require("./unverifAuth")
+
 //requete au serveur pour récupérer les informations utilisateur chez le client
 router.get("/api/getCredentials", isAuth,async (req,res)=>{
     try {
@@ -43,4 +45,25 @@ router.post("/api/logout", isAuth,(req,res)=>{
     })
     
 })
+
+
+
+router.get("/api/vapidConfig",(req,res)=>{
+    res.json({vapidPublicKey:process.env.VAPID_PUBLIC_KEY})
+})
+
+router.post("/api/subscribe", isAuth, async (req,res)=>{
+    try {
+        const subscription = req.body
+        const userId = req.session.user.userId
+
+        await vapidSubscription.findOneAndDelete({userId})
+        await vapidSubscription.create({userId,subscription})
+        res.status(201).json({success:true})
+    } catch (error) {
+        console.error("erreur subscribe")
+        res.status(500).json({error:"erreur serveur"})
+    }
+})
+
 module.exports = router
