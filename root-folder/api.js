@@ -8,9 +8,11 @@ const isUnverifAuth = require("./unverifAuth")
 //requete au serveur pour récupérer les informations utilisateur chez le client
 router.get("/api/getCredentials", isAuth,async (req,res)=>{
     try {
-        const user = await User.findById(req.session.user.userId).select("email username solyTag profilePicture friendRequest friendList")
-        const targetIds = user.friendList.map(friend=>friend.targetUser)
-        const friends = await User.find({_id:{$in:targetIds}}).select("username solyTag profilePicture -_id")
+        const user = await User.findById(req.session.user.userId)
+        .select("email username solyTag profilePicture friendRequest friendList")
+        
+        const friends = await User.find({_id: {$in:user.friendList}})
+            .select("username solyTag profilePicture -_id")
         res.json({
             email:user.email,
             username: user.username,
@@ -34,7 +36,9 @@ router.get("/api/getEmail", isUnverifAuth,async (req,res)=>{
 })
 
 
-router.post("/api/logout", isAuth,(req,res)=>{
+router.post("/api/logout", isAuth ,async (req,res)=>{
+    const userId = req.session.user.userId
+    await vapidSubscription.findOneAndDelete({userId})
     req.session.destroy(async (err)=>{
         if (err) {
             console.error("error destroying the session : " + err)

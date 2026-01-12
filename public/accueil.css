@@ -28,8 +28,8 @@ body {
 
 /*aside navbar*/
 .aside {
-    width: 5em;
-    background-color: var(--color3);
+    width: 4.5em;
+    background-color: transparent;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     color: white;
@@ -37,6 +37,11 @@ body {
     display: flex;
     box-sizing: border-box;
     flex-shrink: 0;
+    position: relative;
+    box-shadow: 
+    inset 0px 0px 6px rgba(255,255, 255, 0.1),
+    0px 0px 10px rgba(0,0,0,.8);
+    background: linear-gradient(300deg, #131212, #161616);
 }
 .asideWrapper {
     display: flex;
@@ -56,7 +61,13 @@ body {
     height: fit-content;
     position: relative;
 }
-
+.iconsWrapper > .splitter {
+    width: 100%;
+    height: .1em;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #1a1a1a,#2a2a2a,#1a1a1a);
+    filter: brightness(1.5);
+}
 .iconsWrapper > i {
     aspect-ratio: 1/1;
     background-color:   var(--color3);
@@ -77,6 +88,7 @@ body {
 .iconsWrapper > i:nth-of-type(1) {
     overflow: hidden;
 }
+
 i > img  {
     width: 100%;
     height: 100%;
@@ -112,12 +124,61 @@ i > img  {
     align-items: center;
 
 }
-.settingsWrapper > i {
+.settingsWrapper > i:not(:last-child) {
     transition: all 0.15s ease-in-out;
     &:hover {
         transform: scale(1.1);
         cursor: pointer;
     }
+}
+.settingsWrapper > i:last-child {
+    display: none;
+    aspect-ratio: 1/1;
+    background-color:   var(--color3);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.15s ease-in-out;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    &:hover {
+        transform: scale(1.1);
+        cursor: pointer;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+}
+.menuIcons {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    right: 0;
+    bottom: 4.5em;
+    z-index: 1000;
+    padding: .5em;
+    box-sizing: border-box;
+    width: 10em;
+    height: 10em;
+    pointer-events: none;
+    align-items: center;
+}
+.menuIcons > span {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--color3);
+    position: absolute;
+    width: 90%;
+    height: 2.5em;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5em;
+    padding: .5em;
+    box-sizing: border-box;
+    border-radius: 15px;
+    transition: all 0.2s ease-in-out;
 }
 
 /*main content*/
@@ -132,12 +193,17 @@ i > img  {
 }
 .messageContainer, .addFriendContainer {
     min-width: 20em;
+    max-width: 20em;
     width: auto;
     height: 100%;
     border-radius: 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: none;
     flex-direction: column;
+    box-shadow: 
+    inset 0px 0px 6px rgba(255,255, 255, 0.1),
+    0px 0px 10px rgba(0,0,0,.8);
+    background: linear-gradient(300deg, #131212, #161616);
 }
 .messageContainer.visible {
     display: flex;
@@ -208,8 +274,7 @@ i > img  {
 
 .addFriendButton, .friendRequestButton, .friendRequestNo, .friendRequestYes {
     width: 50%;
-    background-color: var(--color3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
     border-radius: 15px;
     display: flex;
     align-items: center;
@@ -217,10 +282,16 @@ i > img  {
     color: white;
     padding: 1em;
     transition: all 0.15s ease-in-out;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.3);
     &:hover {
         cursor: pointer;
         transform: scale(1.05);
-        background-color: rgba(255, 255, 255, 0.2);
+        filter: brightness(1.6);
     }
 }
 
@@ -238,11 +309,13 @@ i > img  {
     align-items: center;
     position: absolute;
     color: white;
-    background-color: var(--color3);
+    background: linear-gradient(300deg, #131212, #161616);
+    box-shadow: inset 0px 0px 6px rgba(255,255, 255, 0.1), 0px 0px 10px rgba(0,0,0,.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
     top: 50%;
     left: 50%;
     width: clamp(20em,40vw,40em);
+    z-index: 1000;
 }
 .addFriendPopup.visible {
     pointer-events:all;
@@ -346,6 +419,7 @@ i > img  {
     padding: .5em;
     box-sizing: border-box;
     gap: 1em;
+    overflow: hidden;
     &:hover {
         cursor: pointer;
         background-color: var(--color3);
@@ -353,12 +427,21 @@ i > img  {
 
 }
 .friendCredentialsContainer {
-    display: flex;
+    display: flex;  
     flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    min-width: 0;
+    width: 100%;
+}
+.friendCredentialsContainer > .wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
     justify-content: space-between;
 }
 .friendName {
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 .friendPictureContainer {
     width: 3.5em;
@@ -367,6 +450,7 @@ i > img  {
     border: 1px solid rgba(255, 255, 255, 0.1);
     background-color: var(--color3);
     overflow: hidden;
+    flex-shrink: 0;
 }
 .friendPictureContainer > img {
     width: 100%;
@@ -374,11 +458,20 @@ i > img  {
     object-fit: cover;
 }
 
-.friendSolyTag {
+.friendLastMessage {
     color: rgba(255, 255, 255, 0.5);
-    font-weight: 300;
+    font-weight: 400;
     font-size: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+    display: inline-block;
 }
+.friendLastMessageTime {
+    color: rgba(255, 255, 255, 0.5);
+}
+
 /*conversation page*/
 
 .conversationContainer {
@@ -406,6 +499,7 @@ i > img  {
     gap: 1em;
     box-sizing: border-box;
     flex-shrink:0;
+    align-items: center;
 }
 .convInfoWrapper {
     display: flex;
@@ -424,7 +518,6 @@ i > img  {
     font-weight: 300;
 
 }
-
 .backWrapper {
     height: 100%;
     aspect-ratio: 1/1;
@@ -432,7 +525,6 @@ i > img  {
     justify-content: center;
     align-items: center;
 }
-
 .back {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
@@ -447,9 +539,65 @@ i > img  {
         cursor: pointer;
         background-color: rgba(255, 255, 255, 0.2);
     }
+}
+.convHeader > .splitter {
+    display: flex;
+    height: 80%;
+    width: .1em;
+    border-radius: 10px;
+    background: linear-gradient(0deg, #1a1a1a,#2a2a2a,#1a1a1a);
 
 }
+.statusContainer {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+}
+.statusText {
+    color: white;
+}
+.statusDot {
+    background-color: red;
+    width: .5em;
+    height: .5em;
+    aspect-ratio: 1/1;
+    border-radius: 20px;
+    position: relative;
+}
+.statusDot::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 20px;
+    z-index: -1;
+    background-color:rgb(12, 173, 52);
+}
+.statusDot.visible {
+    background-color:rgb(0, 128, 0);
+}
+.statusDot.visible::before {
+    animation: greenDotAnim 2s infinite linear;    
+}
+
+@keyframes greenDotAnim {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    } 50% {
+        transform: scale(2);
+        opacity: 0;
+    } 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
 .convMain {
+    overflow-x: hidden;
     flex: 1;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
@@ -460,13 +608,42 @@ i > img  {
     padding: 1em;
     box-sizing: border-box;
 }
+.convMain > .startSplitter {
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: .8em;
+    text-align: center;
+    
+}
+.convMain > .dateSplitter {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+.convMain > .dateSplitter::before {
+    content: "";
+    position: absolute;
+    width: 80%;
+    height: 2px;
+    top: 50%;
+    background: linear-gradient(90deg,#1a1a1a, #2a2a2a, #1a1a1a);
+    z-index: -1;
+}
 
 .messageUserContainer, .messageTargetUserContainer {
-    background-color: var(--color3);
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: .5em 1em;
     border-radius: 15px;
     position: relative;
+    display: flex;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .messageUserContainer::before, .messageTargetUserContainer::before {
@@ -476,6 +653,12 @@ i > img  {
     width: 0px;
     height: 0px;
     border-style: solid;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .messageUserContainer::before {
@@ -497,7 +680,37 @@ i > img  {
 .messageTargetUserContainer {
     margin-left: auto;
 }
-
+.messageUser {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+}
+.messageUser > p {
+    max-width: 30em;
+    min-width: 0;
+    height: auto;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+.messageUser > .wrapper {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    gap: .1em;
+}
+.messageUser > .wrapper > h4 {
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    display: inline-block;
+}
+.messageUser > .wrapper > .material-symbols-outlined {
+    color: rgba(255,255,255,0.7);
+    font-size: 1.1em;
+    display: inline-block;
+}
+.messageUser > .wrapper > .material-symbols-outlined.visible {
+    color: #45abf5;
+}
 .convFooter {
     width: 100%;
     height: 4em;
@@ -628,12 +841,11 @@ i > img  {
 @media (max-width:900px) {
     body {
         flex-direction: column-reverse;
-        padding: .5em .5em 1.5em .5em;
-        
+        padding: .5em .5em 2em .5em;
     }
     .aside {
         width: 100%;
-        height: 5em;
+        height: 4.5em;
         padding: 0.5em 0.75em ;
     }
     .asideWrapper {
@@ -644,7 +856,41 @@ i > img  {
         height: 100%;
         width: fit-content;
     }
-    
+
+    .settingsWrapper > i:not(:last-child) {
+        display: none;
+    }
+    .settingsWrapper > i:last-child {
+        display: flex;
+    }
+    .menuIcons.visible {
+        pointer-events: all;
+    }
+    .menuIcons.visible > span {
+        opacity: 1;
+        pointer-events: all;
+        &:hover {
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+    .menuIcons.visible > span:nth-of-type(1) {
+        bottom: 70%;
+    }
+    .menuIcons.visible > span:nth-of-type(2) {
+        bottom: calc(70% - 3em);
+    }
+    .menuIcons.visible > span:nth-of-type(3) {
+        bottom: calc(70% - 6em);
+    }
+    .iconsWrapper > .splitter {
+        width: .2em;
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(0deg, #1a1a1a,#2a2a2a,#1a1a1a);
+        filter: brightness(1.5);
+    }
+
     .iconsWrapper > i {
         height: 100%;
     }
@@ -652,7 +898,9 @@ i > img  {
         position: relative;
         top: 0;
         padding: 0 0 1em 0;
-        
+    }
+    body:focus-within {
+        padding: .5em;
     }
     .friendContainer {
         padding: .5em 0em;
@@ -660,6 +908,7 @@ i > img  {
     .messageContainer,.addFriendContainer {
         width: 100%;
         border: none;
+        max-width: none;
     }
     .messageTitle, .addFriendTitle {
         border: 1px solid rgba(255, 255, 255, 0.1);

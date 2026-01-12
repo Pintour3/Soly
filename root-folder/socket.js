@@ -1,6 +1,7 @@
 const User = require("./userModel")
 const Conversation = require("./messageModel");
-const {sendPushNotification} = require("./sendNotif")
+const {sendPushNotification} = require("./sendNotif");
+const { connect } = require("mongoose");
 //mapping des utilisateur connectés
 const connectedUsers = {}
 
@@ -11,14 +12,34 @@ function socketHandler(io) {
             return;
         }
         const userId = session.user.userId
+        if (connectedUsers[userId]) { //si un autre appareil est connecté sur le meme compte
+            console.log("doublon détecté")
+            const id = connectedUsers[userId]
+            delete connectedUsers[userId]
+            io.to(id).emit("logout")
+            io.to(id).disconnectSockets(true)
+        }
         connectedUsers[userId] = socket.id //link the socket id with the userId
-        console.log("someone just joined with token : " + socket.id)
+        console.log("someone just joined with id : " + userId)
+        const user = await User.findById(userId)
+            .populate({
+                path:"friendList",
+                select:"_id solyTag"}) //populate convert friendlist elt (object id) in real profile
+            .select("username solyTag _id friendRequest friendList profilePicture")
+
+        //online status
+        user.friendList.forEach((friend)=>{ //envoie la liste des amis connectés
+            if (connectedUsers[friend._id]) { //si un utilisateur est connecté 
+                const friendSolyTag = friend.solyTag
+                console.log("un ami connecté")
+                socket.emit("updateOnline",(friendSolyTag))
+                io.to(connectedUsers[friend._id]).emit("updateOnline",(user.solyTag)) 
+            }
+        })
+
         //when client add friends
         socket.on("addFriend",async(targetSolyTag)=>{
             const solyTag = targetSolyTag //{solyTag:"soly#1234"}
-            const user = await User.findById(userId)
-            .populate("friendList") //populate convert friendlist elt (object id) in real profile
-            .select("username solyTag _id friendRequest friendList profilePicture")
             const targetUser = await User.findOne(solyTag)
             .select("username solyTag _id friendRequest friendList profilePicture")
             let userFriendRequest = user.friendRequest
@@ -63,18 +84,17 @@ function socketHandler(io) {
         socket.on("friendRequest",async (req)=>{
             const request = req
             const targetSolyTag = request.solyTag
-            const user = await User.findById(userId)
             const targetUser = await User.findOne({solyTag:targetSolyTag})
             if (request.accepted) { // if friend accept the request
                 await User.findByIdAndUpdate(userId, //for user
                     {
-                        $addToSet:{friendList:{targetUser:targetUser._id,solyTag:targetSolyTag}},//directly pushes the data to the array
+                        $addToSet:{friendList:targetUser._id},//directly pushes the data to the array
                         $pull:{friendRequest:{solyTag:targetSolyTag}} //directly pull the data from the array
                     }, 
                     {new:true})
                 await User.findOneAndUpdate({solyTag:targetSolyTag}, //for target User
                     {
-                        $addToSet:{friendList:{targetUser:user._id,solyTag:user.solyTag}},
+                        $addToSet:{friendList:user._id},
                         $pull:{friendRequest:{solyTag:user.solyTag}}
                     }
                 )
@@ -140,6 +160,14 @@ function socketHandler(io) {
         })
         
         socket.on("disconnect",()=>{
+            //offline status
+            user.friendList.forEach((friend)=>{ //envoie la liste des amis connectés
+                if (connectedUsers[friend._id]) { //si un utilisateur est connecté 
+                    console.log("un ami se déconnecte")
+                    io.to(connectedUsers[friend._id]).emit("updateOffline",(user.solyTag)) 
+                }
+            })
+
             delete connectedUsers[userId]
             console.log("user disconnected : " + userId)
         })

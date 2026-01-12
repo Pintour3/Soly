@@ -6,8 +6,9 @@ const session = require("express-session");
 const server = http.createServer(app);
 const { urlencoded } = require("body-parser");
 
-require('dotenv').config();
-
+require('dotenv').config({
+    path: path.resolve(__dirname, '.env')
+});
 // Body parsers
 app.use(urlencoded({extended: true}));
 app.use(express.json());

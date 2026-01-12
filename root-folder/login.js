@@ -4,6 +4,7 @@ const User = require("./userModel")
 const bcrypt = require("bcryptjs")
 const path = require("path")
 const crypto = require("crypto")
+const mongoose = require("mongoose")
 //LOGIN
 router.post("/login",async (req,res)=>{
     const {email,password} = req.body
@@ -12,7 +13,6 @@ router.post("/login",async (req,res)=>{
         console.log(req.sessionID)
         if (userCheck) {
             const comparePassword = await bcrypt.compare(password,userCheck.password)
-            console.log(comparePassword)
             if (comparePassword) {
                     req.session.authentificated = true;
                     req.session.user = {
@@ -20,6 +20,14 @@ router.post("/login",async (req,res)=>{
                         username:"", 
                         userId:userCheck._id,
                         verified:userCheck.verified
+                    }
+                    //check if there is a session on another device
+                    const sessionCollection = mongoose.connection.collection("Sessions")
+                    const session = await sessionCollection.findOne({
+                        "session.user.userId":userCheck._id
+                    })
+                    if (session) {
+                        await sessionCollection.deleteOne({_id:session._id})
                     }
                     if (userCheck.verified) {
                         console.log("redirection")

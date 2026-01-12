@@ -6,10 +6,8 @@
     <link rel="stylesheet" href="accueil.css">
     <link rel="stylesheet" href="no-interaction.css">
     <script type="module" src="accueil.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,chat_bubble,check,chevron_left,close,info,logout,mic,person_add,send,settings" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,chat_bubble,check,chevron_left,close,done_all,info,logout,mic,person_add,send,settings" />
 
     <link rel="icon" type="image/png" href="/assets/favicons/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.svg" />
@@ -24,14 +22,21 @@
         <div class="asideWrapper">
             <div class="iconsWrapper">
                 <i class="profilePicture" ><img id="profilePicture" src="" alt=""></i>
+                <div class="splitter"></div>
                 <i class="messageIcon material-symbols-outlined">chat_bubble</i>
                 <i class="addFriendIcon material-symbols-outlined">person_add <div class="friendRequestDot"></div></i>
                 
             </div>
             <div class="settingsWrapper">
-                <i id="editProfile" class="editIcon material-symbols-outlined">settings</i>
-                <i class="infoIcon material-symbols-outlined">info</i>
-                <i id="logout" class="logoutIcon material-symbols-outlined">logout</i>
+                <i id="editProfile" class="material-symbols-outlined">settings</i>
+                <i id="infoIcon" class="material-symbols-outlined">info</i>
+                <i id="logout" class=" material-symbols-outlined">logout</i>
+                <i id="menu" class="menu material-symbols-outlined">settings</i>
+            </div>
+            <div class="menuIcons">
+                <span id="editProfile">profile<i class="material-symbols-outlined">settings</i></span>
+                <span id="settings">paramètres<i class="material-symbols-outlined">settings</i></span>
+                <span id="logout">déconnexion<i class="material-symbols-outlined">logout</i></span>
             </div>
         </div>
     </aside>
@@ -78,10 +83,18 @@
                 </div>
                 <div class="convInfoWrapper">
                     <h1 class="convUsername"></h1>
-                    <h4 class="convSolyTag"></h4>
+                </div>
+                <div class="splitter"></div>
+                <div class="statusContainer">
+                    <div class="statusDot"></div>
+                    <div class="statusText">
+                        Hors ligne
+                    </div>
                 </div>
             </header>
-            <main class="convMain"></main>
+            <main class="convMain">
+                <div class="dateSplitter">31.12.2006</div>
+            </main>
             <footer class="convFooter">
                 <div class="convFooterIconsWrapper">
                     <i class="material-symbols-outlined">mic</i>

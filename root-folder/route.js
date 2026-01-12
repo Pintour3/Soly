@@ -54,7 +54,7 @@ router.get(['/accueil','/accueil.html'], isAuth,async(req, res) => {
     }
 });
 //route to picture folder
-router.use("/upload",express.static("upload"))
+router.use("/upload",express.static(path.join(__dirname,"../upload")))
 
 
 
