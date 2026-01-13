@@ -31,7 +31,6 @@ function socketHandler(io) {
         user.friendList.forEach((friend)=>{ //envoie la liste des amis connectés
             if (connectedUsers[friend._id]) { //si un utilisateur est connecté 
                 const friendSolyTag = friend.solyTag
-                console.log("un ami connecté")
                 socket.emit("updateOnline",(friendSolyTag))
                 io.to(connectedUsers[friend._id]).emit("updateOnline",(user.solyTag)) 
             }
@@ -127,20 +126,24 @@ function socketHandler(io) {
             }
         })
         socket.on("message",async (message)=>{
-            socket.emit("messageResponse",message)
             const friendSolyTag = message.receiver
             const receiver = await User.findOne({solyTag:friendSolyTag}).select("_id")
-            const conversationId = [userId.toString(),receiver._id.toString()].sort().join("_")            
-            const conversation = await Conversation.updateOne(
-                {convId:conversationId},{$push:{messages:message}}
+            const conversationId = [userId.toString(),receiver._id.toString()].sort().join("_")       
+
+            const conversation = await Conversation.findOneAndUpdate(
+                {convId:conversationId},
+                {$push:{messages:message}},
+                {new:true,upsert:true}
             )
+            const savedMessage = conversation.messages[conversation.messages.length-1]
+            socket.emit("messageResponse",savedMessage)
+
             if (connectedUsers[receiver._id]) { //if online
                 const targetUserId = connectedUsers[receiver._id]
-                io.to(targetUserId).emit("messageResponse",message)
+                io.to(targetUserId).emit("messageResponse",savedMessage)
             } else { //if offline
-                const sender = await User.findOne({solyTag:message.sender}).select("username")
                 await sendPushNotification(receiver._id.toString(),{
-                    title:`Message de ${sender.username}`,
+                    title:`Message de ${user.username}`,
                     body:message.message,
                     icon:"/public/assets/png/soly_light_ISO_border.png",
                     data:{conversationId}
@@ -158,12 +161,28 @@ function socketHandler(io) {
             }
             socket.emit("askConversationResponse",{friendSolyTag,conv})
         })
-        
+        //update message status 
+        socket.on("updateMessageStatus",async (message,friendSolyTag)=>{
+            const friendId = await User.findOne({solyTag:friendSolyTag}).select("_id").lean()
+            const convId = [userId.toString(),friendId._id.toString()].sort().join("_")
+            const updated = await Conversation.updateOne(
+                {
+                    convId,"messages._id":message._id
+                },{
+                    $set:{"messages.$.status":"read"
+                    },
+                },
+            )
+            message.status = "read"
+            if (connectedUsers[friendId._id]) {
+                io.to(connectedUsers[friendId._id]).emit("updateMessageStatusResponse",message,user.solyTag)
+            }
+        })
+
         socket.on("disconnect",()=>{
             //offline status
             user.friendList.forEach((friend)=>{ //envoie la liste des amis connectés
                 if (connectedUsers[friend._id]) { //si un utilisateur est connecté 
-                    console.log("un ami se déconnecte")
                     io.to(connectedUsers[friend._id]).emit("updateOffline",(user.solyTag)) 
                 }
             })

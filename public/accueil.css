@@ -464,10 +464,18 @@ i > img  {
     font-size: 1em;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
     min-width: 0;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    gap: .2em;
 }
+.friendLastMessage > i {
+    font-size: 1.3em;
+}
+.friendLastMessage > i.visible {
+    color: #45abf5;
+}
+
 .friendLastMessageTime {
     color: rgba(255, 255, 255, 0.5);
 }

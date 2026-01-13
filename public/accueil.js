@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         } else {
             friendRequestDiv.classList.add("visible")
         }
+        currentConv = false
         hideMessDiv()
     })
 
@@ -234,7 +235,7 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             this.sender = sender
             this.receiver = receiver
             this.date = date
-            this.status = status //"sent" | "delivered" | "read"
+            this.status = status //"sent" | "read"
         }
     }
     function popMessage(message,date,sender){
@@ -261,13 +262,13 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         const hours = String(date.getHours()).padStart(2,"0")
         const h4 = document.createElement("h4");
         h4.textContent = hours + ":" + min
-
-        const check = document.createElement("i")
-        check.className = "material-symbols-outlined"
-        check.textContent = "done_all"
-
         infoWrapper.appendChild(h4);
-        infoWrapper.appendChild(check);
+        if (sender) {
+            const check = document.createElement("i")
+            check.className = "material-symbols-outlined"
+            check.textContent = "done_all"
+            infoWrapper.appendChild(check);
+        }        
 
         messageUser.appendChild(p);
         messageUser.appendChild(infoWrapper)
@@ -276,13 +277,13 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 
         const convMain = document.querySelector(".convMain");
         convMain.prepend(mess);
+        return mess
     }
     function popSplitter(message,previousMessage) {
         //check if there is no previousMessage 
         const parent = document.querySelector(".convMain")
         const month = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"]
         const date = new Date(Date.parse(message.date))
-        const previousDate = new Date(Date.parse(previousMessage.date))
         const todayDate = new Date() 
         const yesterdayDate = new Date(todayDate)
         yesterdayDate.setDate(todayDate.getDate()-1)
@@ -368,11 +369,26 @@ document.addEventListener("DOMContentLoaded",async ()=>{
                 } else {
                     popSplitter(message,false)
                 }
+                let domElt;
                 if (message.sender === user.solyTag) {
-                    popMessage(message.message,message.date,true)
-
+                    domElt = popMessage(message.message,message.date,true)
+                    
                 } else {
-                    popMessage(message.message,message.date,false)
+                    domElt =  popMessage(message.message,message.date,false)
+                }
+                //afficher les vues bleu deja existantes
+                const check = domElt.querySelector(".wrapper > i")
+                if (message.status === "read" && check) {
+                    check.classList.add("visible")
+                }
+                //mettre en bleu les messages non lus
+                if (domElt.className === "messageUserContainer") {
+                    if (message.status === "sent") {
+                        //update sent to the server, specify message and user
+                        //server will send update back to the target friend
+                        socket.emit("updateMessageStatus",message,solyTag)
+                        message.status = "read"
+                    }
                 }
             }) 
             const friend = friendList.find(elt => elt.solyTag === currentConv.solyTag)
@@ -522,8 +538,15 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         document.querySelectorAll(".friendWrapper").forEach(friend => {
             const solyTag = friend.dataset.solyTag
             if (solyTag === friendSolyTag) {
-                friend.querySelector(".friendLastMessage").textContent = lastMess.message
-                
+                if (lastMess.sender === user.solyTag) {
+                    if (lastMess.status === "read"){
+                        friend.querySelector(".friendLastMessage").innerHTML = "<i class='material-symbols-outlined visible'>done_all</i>" + lastMess.message
+                    } else {
+                        friend.querySelector(".friendLastMessage").innerHTML = "<i class='material-symbols-outlined'>done_all</i>" + lastMess.message
+                    }
+                } else {
+                    friend.querySelector(".friendLastMessage").textContent = lastMess.message
+                }
                 const lastTime = new Date(Date.parse(lastMess.date))
                 const min = String(lastTime.getMinutes()).padStart(2,"0")
                 const hours = String(lastTime.getHours()).padStart(2,"0")
@@ -536,7 +559,27 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             delete conversationsHandlers[friendSolyTag]
         }   
     })
-
+    socket.on("updateMessageStatusResponse",(message,friendSolyTag)=>{
+        const previousMess = conversations[friendSolyTag].messages.find(mess => mess._id === message._id)
+        previousMess.status = message.status
+        if (currentConv) {
+            if (currentConv.solyTag === friendSolyTag) {
+                const messContainer = document.querySelectorAll(".convMain > .messageTargetUserContainer")
+                messContainer.forEach(mess => {
+                    const icon = mess.querySelector(".messageUser > .wrapper > i")
+                    if (icon.classList.contains("visible")){
+                        return;
+                    } else {
+                        icon.classList.add("visible")
+                    }
+                });
+            }
+        }
+        const friend = Array.from(document.querySelectorAll(".friendWrapper")).find(div=>div.dataset.solyTag === friendSolyTag)
+        if (previousMess.sender === user.solyTag) {
+            friend.querySelector(".friendLastMessage > i").classList.add("visible")
+        }
+    })
     //accept or deny friendRequest
     document.querySelector(".friendRequestContainer").addEventListener("click",(e)=>{
         const button = e.target.closest("button")
@@ -597,15 +640,33 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             if (conv.messages) {
                 const messageList = conv.messages
                 messageList.forEach((message,index) =>{  
+                    
                     if (index > 0) {
                         popSplitter(message,messageList[index-1])
                     } else {
                         popSplitter(message,false)
                     }
+                    let domElt;
                     if (message.sender === user.solyTag) {
-                        popMessage(message.message,message.date,true)
+                        domElt = popMessage(message.message,message.date,true)
+                        
                     } else {
-                        popMessage(message.message,message.date,false)
+                       domElt =  popMessage(message.message,message.date,false)
+                    }
+                    //afficher les vues bleu deja existantes
+                    const check = domElt.querySelector(".wrapper > i")
+                    if (message.status === "read" && check) {
+                        check.classList.add("visible")
+                    }
+                    //mettre en bleu les messages non lus
+                    //envoyer au serveur qui renverra a l'ami
+                    if (domElt.className === "messageUserContainer") {
+                        if (message.status === "sent") {
+                            //update sent to the server, specify message and user
+                            //server will send update back to the target friend
+                            socket.emit("updateMessageStatus",message,solyTag)
+                            message.status = "read"
+                        }
                     }
                 })   
             }
@@ -678,7 +739,6 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             friendRequest.forEach(request=>{
                 if (request.type === "received") { //if this request is asked from another user
                     RedDotNotification = true //we put a red dot for visual
-                    console.log(request)
                     var request = new FriendRequest(request.username,request.solyTag,request.profilePicture) 
                     request.displayRequest()
                     requestList.push(request)
@@ -728,22 +788,31 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 
         } else { //si je recois le message
             friend = friendList.find(elt => elt.solyTag === message.sender) //mon ami est l'envoyeur
+            //et que je suis actuellement sur la conversation
             if (currentConv) {
                 if (currentConv.solyTag === message.sender) { //this prevent the message to pop elsewhere than his specific container
                     popMessage(message.message,message.date,false)
                 }
+                //préviens le serveur que j'ai lu le message
+                const friendSolyTag = friend.solyTag
+                socket.emit("updateMessageStatus",message,friendSolyTag)
             }
         }
         const friendDiv = Array.from(document.querySelectorAll(".friendWrapper")).find(div=>div.dataset.solyTag === friend.solyTag)
-        friendDiv.querySelector(".friendLastMessage").textContent = message.message
+        if (message.sender === user.solyTag) {
+            friendDiv.querySelector(".friendLastMessage").innerHTML = "<i class='material-symbols-outlined'>done_all</i>" + message.message
+
+        } else {
+            friendDiv.querySelector(".friendLastMessage").textContent = message.message
+        }
 
         const lastTime = new Date(Date.parse(message.date))
         const min = String(lastTime.getMinutes()).padStart(2,"0")
         const hours = String(lastTime.getHours()).padStart(2,"0")
         friendDiv.querySelector(".friendLastMessageTime").textContent = hours + ":" + min
+        
         conversations[friend.solyTag].messages.push(message)
         const container = document.querySelector(".convMain")
         container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
     })
-     
 })
