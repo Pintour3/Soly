@@ -230,15 +230,16 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         }
     }
     class Message {
-        constructor(message,sender,receiver,date,status = "sent") {
+        constructor(message,sender,receiver,date,status = "sent",mediaLink = "") {
             this.message = message
             this.sender = sender
             this.receiver = receiver
             this.date = date
             this.status = status //"sent" | "read"
+            this.mediaLink = mediaLink // "link.webp | false"
         }
     }
-    function popMessage(message,date,sender){
+    function popMessage(message,date,media = "",sender){
         
         const mess = document.createElement("div");
         
@@ -269,8 +270,14 @@ document.addEventListener("DOMContentLoaded",async ()=>{
             check.textContent = "done_all"
             infoWrapper.appendChild(check);
         }        
-
+        if (media.length > 0 ) {
+            const img = document.createElement("img")
+            img.src = "/media/" + media
+            img.className = "mediaImg"
+            messageUser.appendChild(img)
+        }
         messageUser.appendChild(p);
+        
         messageUser.appendChild(infoWrapper)
         
         mess.appendChild(messageUser);
@@ -371,10 +378,10 @@ document.addEventListener("DOMContentLoaded",async ()=>{
                 }
                 let domElt;
                 if (message.sender === user.solyTag) {
-                    domElt = popMessage(message.message,message.date,true)
+                    domElt = popMessage(message.message,message.date,message.media,true)
                     
                 } else {
-                    domElt =  popMessage(message.message,message.date,false)
+                    domElt =  popMessage(message.message,message.date,message.media,false)
                 }
                 //afficher les vues bleu deja existantes
                 const check = domElt.querySelector(".wrapper > i")
@@ -421,7 +428,9 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         VAPID_PUBLIC_KEY = config.vapidPublicKey
         await requestNotificationPermission()
     }
-
+    document.getElementById("settings").onclick = async () => {
+        await notifInit()
+    }
     document.getElementById("infoIcon").onclick = async () => {
             await notifInit()
         }
@@ -648,10 +657,10 @@ document.addEventListener("DOMContentLoaded",async ()=>{
                     }
                     let domElt;
                     if (message.sender === user.solyTag) {
-                        domElt = popMessage(message.message,message.date,true)
+                        domElt = popMessage(message.message,message.date,message.media,true)
                         
                     } else {
-                       domElt =  popMessage(message.message,message.date,false)
+                       domElt =  popMessage(message.message,message.date,message.media,false)
                     }
                     //afficher les vues bleu deja existantes
                     const check = domElt.querySelector(".wrapper > i")
@@ -784,14 +793,14 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         let friend;
         if (message.sender === user.solyTag) { //si je suis l'envoyeur
             friend = friendList.find(elt => elt.solyTag === message.receiver) //mon ami est le receveur
-            popMessage(message.message,message.date,true)
+            popMessage(message.message,message.date,message.media,true)
 
         } else { //si je recois le message
             friend = friendList.find(elt => elt.solyTag === message.sender) //mon ami est l'envoyeur
             //et que je suis actuellement sur la conversation
             if (currentConv) {
                 if (currentConv.solyTag === message.sender) { //this prevent the message to pop elsewhere than his specific container
-                    popMessage(message.message,message.date,false)
+                    popMessage(message.message,message.date,message.media,false)
                 }
                 //préviens le serveur que j'ai lu le message
                 const friendSolyTag = friend.solyTag
@@ -814,5 +823,37 @@ document.addEventListener("DOMContentLoaded",async ()=>{
         conversations[friend.solyTag].messages.push(message)
         const container = document.querySelector(".convMain")
         container.scrollTo({top:container.scrollHeight,behavior:"smooth"})
+    })
+
+    //medias (photos)
+    const mediaInput = document.getElementById("media")
+    mediaInput.addEventListener("change",async ()=>{
+        if (mediaInput.files.length === 1) {
+            const file = mediaInput.files[0]
+            console.log("file selected : ", mediaInput.files[0])
+            const formData = new FormData()
+            formData.append("mediaPicture",file)
+            try {
+                const response = await fetch("/sendMedia",{
+                    method:"POST",
+                    credentials:"include",
+                    body:formData
+
+                })
+                const data = await response.json()
+                if (data.link.length > 0) {
+                    //spawn popUp
+                    
+                    const message =  input.value.trim()
+                    const link = data.link
+                    const mess = new Message(message,user.solyTag,currentConv.solyTag,new Date(),"sent",link)
+                    socket.emit("message",mess) //send message
+                    input.value = "" //clear input
+                    input.focus()
+                }
+            } catch(err) {
+                console.error("error : ", err)
+            }
+        }
     })
 })

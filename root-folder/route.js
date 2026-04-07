@@ -3,7 +3,7 @@ const path = require("path")
 const router = express.Router()
 const isAuth = require("./auth")
 const User = require("./userModel")
-const upload = require("./multer")
+const {upload, media,compressUpload, compressMedia} = require("./multer")
 const fs = require("fs")
 const isUnverifAuth = require("./unverifAuth")
 const {updateSession} = require("./updateSession")
@@ -55,7 +55,7 @@ router.get(['/accueil','/accueil.html'], isAuth,async(req, res) => {
 });
 //route to picture folder
 router.use("/upload",express.static(path.join(__dirname,"../upload")))
-
+router.use("/media",express.static(path.join(__dirname,"../media")))
 
 
 
@@ -138,7 +138,7 @@ router.get("/checkToken",async (req,res)=> {
 })
 
 //partie personnalisation utilisateur
-router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res)=>{
+router.post("/editProfile",isAuth,upload.single("profilePicture"),compressUpload,async (req,res)=>{
     try {
         const userId = req.session.user.userId
         //if username is not valid
@@ -214,5 +214,17 @@ router.post("/editProfile",isAuth,upload.single("profilePicture"),async (req,res
         console.error(error)
     }
 })
+router.post("/sendMedia",isAuth,media.single("mediaPicture"),compressMedia, (req,res)=>{
+    if (req.file) {
+        console.log("file found : ", req.file)
+        //store the file and create a link with the file ref 
+        //then send it back to user with the link variable
+        console.log(req.file.filename)
+        const link = req.file.filename
+        res.status(201).json({message:"file received",link:link})
 
+    } else {
+        console.log("no file received")
+    }
+}) 
 module.exports = router

@@ -10,9 +10,8 @@ require('dotenv').config({
     path: path.resolve(__dirname, '.env')
 });
 // Body parsers
-app.use(urlencoded({extended: true}));
-app.use(express.json());
-
+app.use(urlencoded({extended: true,limit:"10mb"}));
+app.use(express.json({limit:"10mb"}));
 // Files imports
 const route = require("./root-folder/route");
 const login = require("./root-folder/login");

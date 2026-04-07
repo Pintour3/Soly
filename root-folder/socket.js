@@ -129,10 +129,18 @@ function socketHandler(io) {
             const friendSolyTag = message.receiver
             const receiver = await User.findOne({solyTag:friendSolyTag}).select("_id")
             const conversationId = [userId.toString(),receiver._id.toString()].sort().join("_")       
-
+            const newMessage = {
+                message:message.message,
+                media: message.mediaLink,
+                sender:message.sender,
+                receiver:message.receiver,
+                date:message.date,
+                status:message.status
+            }
             const conversation = await Conversation.findOneAndUpdate(
                 {convId:conversationId},
-                {$push:{messages:message}},
+                {
+                    $push:{messages:newMessage}},
                 {new:true,upsert:true}
             )
             const savedMessage = conversation.messages[conversation.messages.length-1]

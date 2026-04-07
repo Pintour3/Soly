@@ -35,7 +35,7 @@
             </div>
             <div class="menuIcons">
                 <span id="editProfile">profile<i class="material-symbols-outlined">settings</i></span>
-                <span id="settings">paramètres<i class="material-symbols-outlined">settings</i></span>
+                <span id="settings">notifications<i class="material-symbols-outlined">info</i></span>
                 <span id="logout">déconnexion<i class="material-symbols-outlined">logout</i></span>
             </div>
         </div>
@@ -93,12 +93,15 @@
                 </div>
             </header>
             <main class="convMain">
-                <div class="dateSplitter">31.12.2006</div>
+                <div class="dateSplitter"></div>
             </main>
             <footer class="convFooter">
                 <div class="convFooterIconsWrapper">
                     <i class="material-symbols-outlined">mic</i>
-                    <i class="material-symbols-outlined">add</i>
+                    <input type="file" style="display: none;" id="media" accept="image/*">
+                    <label for="media" class="convFooterMediaButton">
+                        <i class="material-symbols-outlined">add</i>
+                    </label>
                 </div>
                 <input type="text" class="convFooterInput">
                 <button class="convFooterButton"><i class="material-symbols-outlined">send</i></button>

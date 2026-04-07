@@ -18,6 +18,7 @@ fetch("/api/getEmail",{
 //send mail with the button click
 const sendEmail = document.getElementById("sendEmail")
 sendEmail.onclick = () => {
+    sendEmail.textContent = "envoyé !"
     fetch("/emailVerif",{
         method: "POST",
         credentials:"include",
